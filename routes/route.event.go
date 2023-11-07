@@ -9,7 +9,7 @@ import (
 )
 
 func InitEventRoute(r *gin.Engine) {
-	group := r.Group("/event")
+	group := r.Group("/api/event")
 	group.DELETE(":id") //can only delete recently created event
 	group.GET("")       //
 	group.GET(":id")
