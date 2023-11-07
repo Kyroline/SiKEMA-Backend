@@ -6,5 +6,5 @@ type Input struct {
 	ClassId   uint
 	Meet      uint
 	StudentId []uint
-	Status    bool
+	Status    uint
 }
