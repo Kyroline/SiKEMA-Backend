@@ -52,7 +52,7 @@ func MassPresent(c *gin.Context) {
 			return err
 		}
 
-		if err := tx.Model(&model.Event{}).Association("Students").Append(&students); err != nil {
+		if err := tx.Model(&event).Association("Students").Append(&students); err != nil {
 			return err
 		}
 		return nil
