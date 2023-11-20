@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Kompen struct {
 	gorm.Model
-	StudentId  uint `gorm:"foreignKey:StudentId"`
+	StudentID  uint `gorm:"foreignKey:StudentID"`
 	Student    Student
 	Semester   uint
 	AmountLeft uint

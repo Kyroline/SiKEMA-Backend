@@ -59,3 +59,18 @@
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `status`      | `uint` | **Required**. Attendance event status |
+
+#### Create new class
+
+```http
+  POST /api/class
+```
+
+| Header | Description                           |
+| :----- | :------------------------------------ |
+| `token` | **Required**. Your API key |
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `name` | `uint` | **Required**. Class name |
+| `student` | `array[uint]` | List of student IDs that will be in that class |

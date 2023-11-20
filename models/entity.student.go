@@ -1,13 +1,18 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 type Student struct {
-	UserId uint
-	User   User `gorm:"foreignKey:UserId"`
-	gorm.Model
-	ClassId uint
-	Nim     string
-	Name    string
-	Events  []Event `gorm:"many2many:student_events"`
+	UserID  *uint
+	User    User `gorm:"foreignKey:UserID" json:"-"`
+	ID      uint `gorm:"primaryKey"`
+	ClassID uint
+	Class   Class  `gorm:"foreignKey:ClassID" json:"-"`
+	Nim     string `gorm:"type:varchar(25)"`
+	Name    string `gorm:"type:varchar(255)"`
+	Address string `gorm:"type:varchar(255)"`
+	Dob     time.Time
+	Year    uint
 }

@@ -4,7 +4,9 @@ import "gorm.io/gorm"
 
 type Absent struct {
 	gorm.Model
-	StudentId uint
-	Student   Student `gorm:"foreignKey:StudentId"`
+	StudentID uint
+	Student   Student `gorm:"foreignKey:StudentID"`
+	EventID   uint
+	Event     Event `gorm:"foreignKey:EventID"`
 	Hours     uint
 }
