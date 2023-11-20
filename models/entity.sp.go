@@ -1,8 +1,10 @@
 package model
 
 type SP struct {
-	Id        uint `gorm:"primaryKey"`
-	StudentId uint
-	Student   Student `gorm:"foreignKey:StudentId"`
+	ID        uint `gorm:"primaryKey"`
+	StudentID uint
+	Student   Student `gorm:"foreignKey:StudentID"`
+	Semester  uint
 	Level     uint
+	Status    uint
 }

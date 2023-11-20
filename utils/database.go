@@ -1,10 +1,11 @@
 package util
 
 import (
+	model "attendance-is/models"
+
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	model "attendance-is/models"
 )
 
 var DB *gorm.DB
@@ -22,6 +23,7 @@ func Connection(user string, pass string, host string, port string, dbname strin
 
 func Migrate() {
 	DB.Debug().AutoMigrate(
+		&model.User{},
 		&model.Absent{},
 		&model.Class{},
 		&model.Event{},
@@ -30,6 +32,16 @@ func Migrate() {
 		&model.Lecturer{},
 		&model.SP{},
 		&model.Student{},
-		&model.User{},
 	)
+}
+
+func HandleGORMError(c *gin.Context, err error, status int, message string) bool {
+	if err != nil {
+		c.JSON(status, gin.H{
+			"message": message,
+			"error":   err.Error(),
+		})
+		return true
+	}
+	return false
 }

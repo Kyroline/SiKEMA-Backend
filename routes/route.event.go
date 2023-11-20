@@ -1,21 +1,24 @@
 package route
 
 import (
-	createEvent "attendance-is/controllers/event-controllers/create"
-	doPresent "attendance-is/controllers/event-controllers/do-present"
-	updateEvent "attendance-is/controllers/event-controllers/update"
+	event "attendance-is/controllers/event"
+	service "attendance-is/services"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func InitEventRoute(r *gin.Engine) {
-	group := r.Group("/api/event")
-	group.DELETE(":id") //can only delete recently created event
-	group.GET("")       //
-	group.GET(":id")
-	group.PATCH(":id", updateEvent.UpdateEvent)
-	group.POST("", createEvent.CreateEvent)
-	group.POST(":id/record", doPresent.DoPresent)
-	group.POST(":id/massrecord", doPresent.MassPresent)
-	group.PUT(":id", updateEvent.UpdateEvent)
+func InitEventRoute(db *gorm.DB, r *gin.Engine) {
+	eventService := service.NewEventService(db)
+	eventHandler := event.NewEventHandler(eventService)
+
+	//from lecturer
+	groupLecturer := r.Group("/api/lecturer/:lecturerid/event")
+	groupLecturer.DELETE(":id") //can only delete recently created event
+	groupLecturer.GET("")
+	groupLecturer.GET(":id")
+	groupLecturer.PATCH(":id", eventHandler.FinalizeEventHandler)
+	groupLecturer.POST("", eventHandler.CreateEventHandler)
+	groupLecturer.POST(":id/students", eventHandler.AddStudentToEvent)
+	groupLecturer.PUT(":id", eventHandler.FinalizeEventHandler)
 }
