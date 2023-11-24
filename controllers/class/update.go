@@ -10,12 +10,17 @@ import (
 
 func (h *handler) UpdateClassHandler(c *gin.Context) {
 	data := schema.UpdateClassRequest{}
-	c.ShouldBindJSON(&data)
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
 
-	id, _ := strconv.ParseUint(c.Param("id"), 0, 16)
+	id, _ := strconv.Atoi(c.Param("id"))
 	data.ID = uint(id)
 
-	_, err := h.service.UpdateClass(data)
+	data2, err := h.service.UpdateClass(data)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -24,5 +29,8 @@ func (h *handler) UpdateClassHandler(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	// c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, gin.H{
+		"data": data2,
+	})
 }

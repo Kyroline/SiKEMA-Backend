@@ -1,10 +1,10 @@
 package schema
 
 type CreateEventRequest struct {
-	LecturerId uint
-	CourseId   uint
-	ClassId    uint
-	Meet       uint
+	LecturerId uint `json:"lecturer_id"`
+	CourseId   uint `json:"course_id"`
+	ClassId    uint `json:"class_id"`
+	Meet       uint `json:"meet"`
 }
 
 type FinalizeEventRequest struct {
@@ -13,5 +13,5 @@ type FinalizeEventRequest struct {
 
 type AddStudentToEventRequest struct {
 	EventId   uint
-	StudentId []string
+	StudentId []string `json:"student_id"`
 }

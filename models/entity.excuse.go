@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Excuse struct {
 	gorm.Model
 	AbsentID   uint
-	Absent     Absent `gorm:"foreignKey:AbsentID"`
+	Absent     Absent `gorm:"foreignKey:AbsentID" json:"absent,omitempty"`
 	Excuse     string `gorm:"type:varchar(255)"`
 	Attachment string `gorm:"type:varchar(255)"`
 	Status     uint

@@ -15,8 +15,8 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	//from lecturer
 	groupLecturer := r.Group("/api/lecturer/:lecturerid/event")
 	groupLecturer.DELETE(":id") //can only delete recently created event
-	groupLecturer.GET("")
-	groupLecturer.GET(":id")
+	groupLecturer.GET("", eventHandler.GetEvent)
+	groupLecturer.GET(":id", eventHandler.FindEvent)
 	groupLecturer.PATCH(":id", eventHandler.FinalizeEventHandler)
 	groupLecturer.POST("", eventHandler.CreateEventHandler)
 	groupLecturer.POST(":id/students", eventHandler.AddStudentToEvent)
