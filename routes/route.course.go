@@ -15,6 +15,6 @@ func InitCourseRoute(db *gorm.DB, r *gin.Engine) {
 	groupLecturer := r.Group("api/lecturer/:lecturerid/course")
 	groupLecturer.GET("", courseHandler.GetCourseByLecturer)
 
-	groupPBM := r.Group("api/pbm/:pbmid/course")
-	groupPBM.GET("", courseHandler.GetCourseByLecturer)
+	groupPBM := r.Group("api/course")
+	groupPBM.GET("", courseHandler.GetCourseByPBM)
 }

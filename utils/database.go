@@ -26,12 +26,14 @@ func Migrate() {
 		&model.User{},
 		&model.Absent{},
 		&model.Class{},
+		&model.Course{},
 		&model.Event{},
 		&model.Excuse{},
 		&model.Kompen{},
 		&model.Lecturer{},
 		&model.SP{},
 		&model.Student{},
+		// &model.Enrollment{},
 	)
 }
 

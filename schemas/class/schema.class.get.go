@@ -24,7 +24,7 @@ type CreateClassRequest struct {
 }
 
 type UpdateClassRequest struct {
-	ID       uint
+	ID       uint `json:"-"`
 	Name     string
 	Students []uint
 }

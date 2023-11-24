@@ -17,7 +17,7 @@ func NewEventService(db *gorm.DB) EventService {
 
 func (s *EventService) GetEvent() (*[]model.Event, error) {
 	var event []model.Event
-	if err := s.DB.Find(&event).Error; err != nil {
+	if err := s.DB.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Find(&event).Error; err != nil {
 		return nil, err
 	}
 
@@ -26,7 +26,7 @@ func (s *EventService) GetEvent() (*[]model.Event, error) {
 
 func (s *EventService) FindEvent(id uint) (*model.Event, error) {
 	var event model.Event
-	if err := s.DB.Where("id = ?", id).Find(&event).Error; err != nil {
+	if err := s.DB.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("id = ?", id).Find(&event).Error; err != nil {
 		return nil, err
 	}
 
@@ -34,7 +34,7 @@ func (s *EventService) FindEvent(id uint) (*model.Event, error) {
 }
 
 func (s *EventService) CreateEvent(data schema.CreateEventRequest) (*model.Event, error) {
-	newEvent := model.Event{CourseID: data.Meet, ClassID: data.ClassId, Meet: data.Meet, Status: 0}
+	newEvent := model.Event{LecturerID: data.LecturerId, CourseID: data.CourseId, ClassID: data.ClassId, Meet: data.Meet, Status: 0}
 	if err := s.DB.Create(&newEvent).Error; err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (s *EventService) AddStudentToEvent(data schema.AddStudentToEventRequest) (
 	}
 
 	var event model.Event
-	if err := s.DB.Where("id = ?", 1).Find(&event).Error; err != nil {
+	if err := s.DB.Where("id = ?", data.EventId).Find(&event).Error; err != nil {
 		return nil, err
 	}
 

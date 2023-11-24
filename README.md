@@ -1,10 +1,40 @@
 
 ## API Reference
 
+#### Get all event
+
+```http
+  GET /api/lecturer/{lecturerid}/event
+```
+
+| Header | Description                           |
+| :----- | :------------------------------------ |
+| `token` | **Required**. Your API key |
+
+| Query  | Description                |
+| :-------- | :------------------------- |
+| `page` | Pagination page  |
+| `itemperpage` | Controls how many item displayed per page |
+
+#### Get event
+
+```http
+  GET /api/lecturer/{lecturerid}/event/${id}
+```
+
+| Header | Description                           |
+| :----- | :------------------------------------ |
+| `token` | **Required**. Your API key |
+
+| Query  | Description                |
+| :-------- | :------------------------- |
+| `page` | Pagination page  |
+| `itemperpage` | Controls how many item displayed per page |
+
 #### Create new event
 
 ```http
-  POST /api/event
+  POST /api/lecturer/{lecturerid}/event
 ```
 
 | Header | Description                           |
@@ -13,15 +43,14 @@
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `id` | `uint` | **Required**. IDK Yet |
+| `course_id` | `uint` | **Required**. Course ID |
 | `class_id` | `uint` | **Required**. Class ID intended for attendance  |
 | `meet` | `uint` | **Required**. Indicates which course meetings |
-| `student_id` | `array[uint]` | List of student IDs that have been recorded |
 
-#### Record attendance
+#### Record attendance (add student to attendance event)
 
 ```http
-  GET /api/event/${id}/record
+  POST /api/lecturer/{lecturerid}/event/{id}/students
 ```
 
 | Header | Description                           |
@@ -30,12 +59,12 @@
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `nim`      | `string` | **Required**. ID of the student whose attendance will be recorded |
+| `student_id`      | `array[string]` | **Required**. List of IDs of the student whose attendance will be recorded |
 
-#### Record mass attendance
+#### Remove attendance (remove student from attendance event)
 
 ```http
-  GET /api/event/${id}/massrecord
+  DELETE /api/lecturer/{lecturerid}/event/{id}/students
 ```
 
 | Header | Description                           |
@@ -44,12 +73,12 @@
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `nim`      | `array[string]` | **Required**. List of IDs of the student whose attendance will be recorded |
+| `student_id`      | `array[string]` | **Required**. List of IDs of the student whose attendance will be removed |
 
-#### Update event
+#### Finalize event (Event will now be read-only)
 
 ```http
-  PATCH/PUT /api/event/${id}
+  PATCH/PUT /api/lecturer/{lecturerid}/event/{id}
 ```
 
 | Header | Description                           |
@@ -60,17 +89,3 @@
 | :-------- | :------- | :-------------------------------- |
 | `status`      | `uint` | **Required**. Attendance event status |
 
-#### Create new class
-
-```http
-  POST /api/class
-```
-
-| Header | Description                           |
-| :----- | :------------------------------------ |
-| `token` | **Required**. Your API key |
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `name` | `uint` | **Required**. Class name |
-| `student` | `array[uint]` | List of student IDs that will be in that class |

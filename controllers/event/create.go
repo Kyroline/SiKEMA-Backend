@@ -9,7 +9,11 @@ import (
 
 func (h *handler) CreateEventHandler(c *gin.Context) {
 	var input schema.CreateEventRequest
-	c.ShouldBindJSON(&input)
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
 
 	newEvent, err := h.service.CreateEvent(input)
 	if err != nil {

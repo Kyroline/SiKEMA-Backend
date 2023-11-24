@@ -1,12 +1,9 @@
 package model
 
-import "gorm.io/gorm"
-
 type Course struct {
-	gorm.Model
-	Code      string
+	ID        uint   `gorm:"primaryKey"`
+	Code      string `gorm:"unique"`
 	Name      string
-	ClassID   *uint
-	Class     Class       `gorm:"foreignKey:ClassID"`
-	Lecturers *[]Lecturer `gorm:"many2many:course_lecturers"`
+	Classes   *[]Class    `gorm:"many2many:enrollments" json:"classes,omitempty"`
+	Lecturers *[]Lecturer `gorm:"many2many:enrollment_lecturers" json:"lecturers,omitempty"`
 }

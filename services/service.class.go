@@ -31,12 +31,23 @@ func (s *ClassService) CreateClass(data schema.CreateClassRequest) (*model.Class
 
 func (s *ClassService) UpdateClass(data schema.UpdateClassRequest) (*model.Class, error) {
 	var students []model.Student
-	if err := s.DB.Where("id = ?", data.Students).Find(&students).Error; err != nil {
+	if err := s.DB.Where("ID IN (?)", data.Students).Find(&students).Error; err != nil {
 		return nil, err
 	}
 
 	var class model.Class
 	if err := s.DB.Where("id = ?", data.ID).Find(&class).Error; err != nil {
+		return nil, err
+	}
+
+	if err := s.DB.Model(&class).Association("Students").Replace(&students); err != nil {
+		return nil, err
+	}
+
+	class.Name = data.Name
+	class.Students = students
+
+	if err := s.DB.Save(&class).Error; err != nil {
 		return nil, err
 	}
 
@@ -99,7 +110,7 @@ func (s *ClassService) UpdateStudentFromClass(data schema.UpdateStudentFromClass
 
 func (s *ClassService) GetClass(meta *schema.GetStudentMeta) (*[]model.Class, error) {
 	var class []model.Class
-	if err := s.DB.Model(&model.Class{}).Preload("Students").Count(&meta.Count).Limit(int(meta.ItemPerPage)).Offset(int(meta.ItemPerPage * (meta.Page - 1))).Find(&class).Error; err != nil {
+	if err := s.DB.Model(&model.Class{}).Count(&meta.Count).Limit(int(meta.ItemPerPage)).Offset(int(meta.ItemPerPage * (meta.Page - 1))).Preload("Students").Find(&class).Error; err != nil {
 		return nil, err
 	}
 

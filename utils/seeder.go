@@ -8,7 +8,7 @@ func Seed() {
 		{Name: "TIB2021"},
 		{Name: "TIC2021"},
 	}
-	DB.Create(&classes)
+	DB.Save(&classes)
 
 	students := []model.Student{
 		{Nim: "43321001", Name: "ADI RIFTA DWI KURNIAWAN"},
@@ -45,7 +45,7 @@ func Seed() {
 		{Nim: "43321210", Name: "HENDI AHMAD SHOLEHUDIN"},
 	}
 
-	DB.Create(&students)
+	DB.Save(&students)
 
 	DB.Model(&classes[0]).Association("Students").Replace(students[0:10])
 	DB.Model(&classes[1]).Association("Students").Replace(students[10:20])
@@ -73,7 +73,7 @@ func Seed() {
 		{Nip: "197704012005011001", Name: "WAHYU SULISTIYO, S.T., M.Kom."},
 	}
 
-	DB.Create(&lecturer)
+	DB.Save(&lecturer)
 
 	courses := []model.Course{
 		{Code: "432-191-502", Name: "Desain dan Perancangan Sistem Informasi"},
@@ -85,16 +85,9 @@ func Seed() {
 		{Code: "432-191-509", Name: "Interaksi Manusia dan Komputer"},
 	}
 
-	DB.Create(&courses)
+	DB.Save(&courses)
 
 	for _, element := range classes {
 		DB.Model(&element).Association("Courses").Replace(courses[0:7])
 	}
-	// DB.Model(&classes[1]).Association("Courses").Replace(courses[7:14])
-	// DB.Model(&classes[2]).Association("Courses").Replace(courses[14:21])
-	// DB.Model(courses[0:7]).Association("Courses").Replace(classes[0])
-	// DB.Model(courses[7:14]).Association("Courses").Replace(classes[1])
-	// DB.Model(courses[14:21]).Association("Courses").Replace(classes[2])
-
-	// DB.Model(&lecturer[13]).Association("Courses").Replace(courses)
 }

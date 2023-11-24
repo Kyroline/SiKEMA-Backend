@@ -20,10 +20,10 @@ func (h *handler) GetClassHandler(c *gin.Context) {
 	}
 
 	class, err := h.service.GetClass(&meta)
-	var response []schema.GetClassResponse
-	for _, element := range *class {
-		response = append(response, element.ToGetClassResponse())
-	}
+	// var response []schema.GetClassResponse
+	// for _, element := range *class {
+	// 	response = append(response, element.ToGetClassResponse())
+	// }
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -34,6 +34,6 @@ func (h *handler) GetClassHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"meta": meta,
-		"data": response,
+		"data": class,
 	})
 }
