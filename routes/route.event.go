@@ -19,6 +19,6 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	groupLecturer.GET(":id", eventHandler.FindEvent)
 	groupLecturer.PATCH(":id", eventHandler.FinalizeEventHandler)
 	groupLecturer.POST("", eventHandler.CreateEventHandler)
-	groupLecturer.POST(":id/students", eventHandler.AddStudentToEvent)
+	groupLecturer.POST(":id/student", eventHandler.AddStudentToEvent)
 	groupLecturer.PUT(":id", eventHandler.FinalizeEventHandler)
 }

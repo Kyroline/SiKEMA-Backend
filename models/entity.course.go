@@ -1,9 +1,9 @@
 package model
 
 type Course struct {
-	ID        uint   `gorm:"primaryKey"`
-	Code      string `gorm:"unique"`
-	Name      string
-	Classes   *[]Class    `gorm:"many2many:enrollments" json:"classes,omitempty"`
-	Lecturers *[]Lecturer `gorm:"many2many:enrollment_lecturers" json:"lecturers,omitempty"`
+	ID        uint        `json:"id,omitempty" gorm:"primaryKey"`
+	Code      string      `json:"code,omitempty" gorm:"unique"`
+	Name      string      `json:"name,omitempty"`
+	Classes   *[]Class    `json:"classes,omitempty" gorm:"many2many:enrollments"`
+	Lecturers *[]Lecturer `json:"lecturers,omitempty" gorm:"many2many:enrollment_lecturers"`
 }

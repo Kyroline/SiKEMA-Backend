@@ -11,7 +11,7 @@ import (
 func main() {
 	util.Connection("root", "", "127.0.0.1", "3306", "attendance-is")
 	util.Migrate()
-	util.Seed()
+	// util.Seed()
 	r := RouterSetup()
 	r.Run(":8000")
 }
@@ -26,11 +26,12 @@ func RouterSetup() *gin.Engine {
 		AllowWildcard: true,
 	}))
 
-	route.InitAbsentRoute(router)
+	route.InitAbsentRoute(util.DB, router)
 	route.InitClassRoute(util.DB, router)
 	route.InitEventRoute(util.DB, router)
 	route.InitCourseRoute(util.DB, router)
 	route.InitStudentRoute(util.DB, router)
+	route.InitExcuseRoute(util.DB, router)
 
 	return router
 }
