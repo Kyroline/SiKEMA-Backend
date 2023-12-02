@@ -1,0 +1,54 @@
+package route
+
+import (
+	// excuse "attendance-is/controllers/excuse"
+	// service "attendance-is/services"
+
+	createExcuse "attendance-is/controllers/excuse/student/create"
+	getExcuse "attendance-is/controllers/excuse/student/get"
+	getAllExcuse "attendance-is/controllers/excuse/student/getAll"
+	updateExcuse "attendance-is/controllers/excuse/student/update"
+	createExcuseHandler "attendance-is/handlers/excuse/student/create"
+	getExcuseHandler "attendance-is/handlers/excuse/student/get"
+	getAllExcuseHandler "attendance-is/handlers/excuse/student/getAll"
+	updateExcuseHandler "attendance-is/handlers/excuse/student/update"
+
+	updateExcuseByPBM "attendance-is/controllers/excuse/pbm/update"
+	updateExcuseByPBMHandler "attendance-is/handlers/excuse/pbm/update"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
+
+func InitExcuseRoute(db *gorm.DB, router *gin.Engine) {
+	getExcuseRepository := getExcuse.NewGetExcuseRepository(db)
+	getExcuseService := getExcuse.NewGetExcuseService(getExcuseRepository)
+	getExcuseHandler := getExcuseHandler.NewGetExcuseHandler(getExcuseService)
+
+	getAllExcuseRepository := getAllExcuse.NewGetAllExcuseRepository(db)
+	getAllExcuseService := getAllExcuse.NewGetAllExcuseService(getAllExcuseRepository)
+	getAllExcuseHandler := getAllExcuseHandler.NewGetAllExcuseHandler(getAllExcuseService)
+
+	createExcuseRepository := createExcuse.NewCreateExcuseRepository(db)
+	createExcuseService := createExcuse.NewCreateExcuseService(createExcuseRepository)
+	createExcuseHandler := createExcuseHandler.NewCreateExcuseHandler(createExcuseService)
+
+	updateExcuseRepository := updateExcuse.NewUpdateExcuseRepository(db)
+	updateExcuseService := updateExcuse.NewUpdateExcuseService(updateExcuseRepository)
+	updateExcuseHandler := updateExcuseHandler.NewUpdateExcuseHandler(updateExcuseService)
+
+	updateExcuseByPBMRepository := updateExcuseByPBM.NewUpdateExcuseRepository(db)
+	updateExcuseByPBMService := updateExcuseByPBM.NewUpdateExcuseService(updateExcuseByPBMRepository)
+	updateExcuseByPBMHandler := updateExcuseByPBMHandler.NewUpdateExcuseHandler(updateExcuseByPBMService)
+
+	groupStudent := router.Group("api/student/:studentid/excuse")
+	groupStudent.GET("", getAllExcuseHandler.GetAllExcuseHandler)
+	groupStudent.GET(":id", getExcuseHandler.GetExcuseHandler)
+	groupStudent.POST("", createExcuseHandler.CreateExcuseHandler)
+	groupStudent.PATCH("", updateExcuseHandler.UpdateExcuseHandler)
+	groupStudent.PUT("", updateExcuseHandler.UpdateExcuseHandler)
+
+	groupPBM := router.Group("api/excuse")
+	groupPBM.PATCH(":id", updateExcuseByPBMHandler.UpdateExcuseHandler)
+	groupPBM.PUT(":id", updateExcuseByPBMHandler.UpdateExcuseHandler)
+}
