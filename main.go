@@ -26,11 +26,11 @@ func RouterSetup() *gin.Engine {
 		AllowWildcard: true,
 	}))
 
-	route.InitAbsentRoute(util.DB, router)
-	route.InitClassRoute(util.DB, router)
+	// route.InitAbsentRoute(util.DB, router)
+	// route.InitClassRoute(util.DB, router)
 	route.InitEventRoute(util.DB, router)
-	route.InitCourseRoute(util.DB, router)
-	route.InitStudentRoute(util.DB, router)
+	// route.InitCourseRoute(util.DB, router)
+	// route.InitStudentRoute(util.DB, router)
 	route.InitExcuseRoute(util.DB, router)
 
 	return router

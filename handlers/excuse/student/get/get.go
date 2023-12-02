@@ -3,6 +3,7 @@ package getExcuseHandler
 import (
 	getExcuse "attendance-is/controllers/excuse/student/get"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,9 @@ func NewGetExcuseHandler(service getExcuse.Service) *handler {
 func (h *handler) GetExcuseHandler(c *gin.Context) {
 	var input getExcuse.InputGetExcuse
 	input.StudentID = c.Param("studentid")
+
+	id, _ := strconv.Atoi(c.Param("id"))
+	input.ID = uint(id)
 	res, err := h.service.GetExcuseService(input)
 
 	switch err {
@@ -30,18 +34,20 @@ func (h *handler) GetExcuseHandler(c *gin.Context) {
 	}
 }
 
-// func (h *handler) GetExcuseHandler(c *gin.Context) {
-// 	var input getExcuse.InputGetExcuseByStudent
-// 	input.StudentID = c.Param("studentid")
-// 	input.ID = c.Param("id")
-// 	res, err := h.service.GetExcuseByStudentService(input)
+func (h *handler) GetExcusesHandler(c *gin.Context) {
+	var input getExcuse.InputGetExcuse
+	input.StudentID = c.Param("studentid")
 
-// 	switch err {
-// 	case "ERR":
+	id, _ := strconv.Atoi(c.Param("id"))
+	input.ID = uint(id)
+	res, err := h.service.GetExcusesService(input)
 
-// 	default:
-// 		c.JSON(http.StatusOK, gin.H{
-// 			"data": res,
-// 		})
-// 	}
-// }
+	switch err {
+	case "ERR":
+
+	default:
+		c.JSON(http.StatusOK, gin.H{
+			"data": res,
+		})
+	}
+}

@@ -13,7 +13,11 @@ import (
 	getAllExcuseHandler "attendance-is/handlers/excuse/student/getAll"
 	updateExcuseHandler "attendance-is/handlers/excuse/student/update"
 
+	getExcuseByPBM "attendance-is/controllers/excuse/pbm/get"
+	getAllExcuseByPBM "attendance-is/controllers/excuse/pbm/getAll"
 	updateExcuseByPBM "attendance-is/controllers/excuse/pbm/update"
+	getExcuseByPBMHandler "attendance-is/handlers/excuse/pbm/get"
+	getAllExcuseByPBMHandler "attendance-is/handlers/excuse/pbm/getAll"
 	updateExcuseByPBMHandler "attendance-is/handlers/excuse/pbm/update"
 
 	"github.com/gin-gonic/gin"
@@ -37,6 +41,14 @@ func InitExcuseRoute(db *gorm.DB, router *gin.Engine) {
 	updateExcuseService := updateExcuse.NewUpdateExcuseService(updateExcuseRepository)
 	updateExcuseHandler := updateExcuseHandler.NewUpdateExcuseHandler(updateExcuseService)
 
+	getExcuseByPBMRepository := getExcuseByPBM.NewGetExcuseRepository(db)
+	getExcuseByPBMService := getExcuseByPBM.NewGetExcuseService(getExcuseByPBMRepository)
+	getExcuseByPBMHandler := getExcuseByPBMHandler.NewGetExcuseHandler(getExcuseByPBMService)
+
+	getAllExcuseByPBMRepository := getAllExcuseByPBM.NewGetAllExcuseRepository(db)
+	getAllExcuseByPBMService := getAllExcuseByPBM.NewGetAllExcuseService(getAllExcuseByPBMRepository)
+	getAllExcuseByPBMHandler := getAllExcuseByPBMHandler.NewGetAllExcuseHandler(getAllExcuseByPBMService)
+
 	updateExcuseByPBMRepository := updateExcuseByPBM.NewUpdateExcuseRepository(db)
 	updateExcuseByPBMService := updateExcuseByPBM.NewUpdateExcuseService(updateExcuseByPBMRepository)
 	updateExcuseByPBMHandler := updateExcuseByPBMHandler.NewUpdateExcuseHandler(updateExcuseByPBMService)
@@ -49,6 +61,8 @@ func InitExcuseRoute(db *gorm.DB, router *gin.Engine) {
 	groupStudent.PUT("", updateExcuseHandler.UpdateExcuseHandler)
 
 	groupPBM := router.Group("api/excuse")
+	groupPBM.GET("", getExcuseByPBMHandler.GetExcuseHandler)
+	groupPBM.GET(":id", getAllExcuseByPBMHandler.GetAllExcuseHandler)
 	groupPBM.PATCH(":id", updateExcuseByPBMHandler.UpdateExcuseHandler)
 	groupPBM.PUT(":id", updateExcuseByPBMHandler.UpdateExcuseHandler)
 }

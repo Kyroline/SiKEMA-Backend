@@ -18,7 +18,8 @@ func NewCreateExcuseService(repository Repository) *service {
 
 func (s *service) CreateExcuseService(input *InputCreateExcuse) (*model.Excuse, string) {
 	newExcuse := model.Excuse{
-		AbsentID:   input.ID,
+		ID:         input.ID,
+		AbsentID:   input.AbsentID,
 		Excuse:     input.Excuse,
 		Attachment: input.Attachment,
 		Status:     0,
