@@ -3,6 +3,7 @@ package service
 import (
 	model "attendance-is/models"
 	schema "attendance-is/schemas"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -62,19 +63,21 @@ func (s *EventService) AddStudentToEvent(data schema.AddStudentToEventRequest) (
 
 func (s *EventService) FinalizeEvent(data schema.FinalizeEventRequest) (*model.Event, error) {
 	var event model.Event
-	s.DB.Model(model.Event{}).Preload("Class.Students").Preload("Students").Where("id = ?", data.EventId).Find(&event)
-
-	studentClassMap := make(map[*model.Student]struct{})
-	for _, m := range event.Class.Students {
-		studentClassMap[&m] = struct{}{}
-	}
 
 	var absentStudent []model.Student
-	for _, m := range event.Students {
-		if _, exists := studentClassMap[&m]; !exists {
-			absentStudent = append(absentStudent, m)
-		}
+
+	s.DB.Model(model.Event{}).Preload("Class.Students").Preload("Students").Where("id = ?", data.EventId).Find(&event)
+
+	if event.Status != 2 {
+		return nil, errors.New("Conflict")
 	}
+
+	var IDs []uint
+	for _, element := range event.Students {
+		IDs = append(IDs, element.ID)
+	}
+
+	s.DB.Where("class_id = ?", event.ClassID).Where("id NOT IN ?", IDs).Find(&absentStudent)
 
 	if err := s.DB.Transaction(func(tx *gorm.DB) error {
 		for _, element := range absentStudent {

@@ -24,15 +24,15 @@ func Connection(user string, pass string, host string, port string, dbname strin
 func Migrate() {
 	DB.Debug().AutoMigrate(
 		&model.User{},
-		&model.Absent{},
+		&model.Student{},
 		&model.Class{},
 		&model.Course{},
+		&model.Lecturer{},
 		&model.Event{},
+		&model.Absent{},
 		&model.Excuse{},
 		&model.Kompen{},
-		&model.Lecturer{},
 		&model.SP{},
-		&model.Student{},
 		// &model.Enrollment{},
 	)
 }
