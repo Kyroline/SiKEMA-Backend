@@ -4,6 +4,8 @@ import (
 	// excuse "attendance-is/controllers/excuse"
 	// service "attendance-is/services"
 
+	middleware "attendance-is/middlewares"
+
 	createExcuse "attendance-is/controllers/excuse/student/create"
 	getExcuse "attendance-is/controllers/excuse/student/get"
 	getAllExcuse "attendance-is/controllers/excuse/student/getAll"
@@ -53,14 +55,14 @@ func InitExcuseRoute(db *gorm.DB, router *gin.Engine) {
 	updateExcuseByPBMService := updateExcuseByPBM.NewUpdateExcuseService(updateExcuseByPBMRepository)
 	updateExcuseByPBMHandler := updateExcuseByPBMHandler.NewUpdateExcuseHandler(updateExcuseByPBMService)
 
-	groupStudent := router.Group("api/student/:studentid/excuse")
+	groupStudent := router.Group("api/student/:studentid/excuse", middleware.Auth(), middleware.IsStudent())
 	groupStudent.GET("", getAllExcuseHandler.GetAllExcuseHandler)
 	groupStudent.GET(":id", getExcuseHandler.GetExcuseHandler)
 	groupStudent.POST("", createExcuseHandler.CreateExcuseHandler)
 	groupStudent.PATCH("", updateExcuseHandler.UpdateExcuseHandler)
 	groupStudent.PUT("", updateExcuseHandler.UpdateExcuseHandler)
 
-	groupPBM := router.Group("api/excuse")
+	groupPBM := router.Group("api/excuse", middleware.Auth(), middleware.IsPBM())
 	groupPBM.GET("", getExcuseByPBMHandler.GetExcuseHandler)
 	groupPBM.GET(":id", getAllExcuseByPBMHandler.GetAllExcuseHandler)
 	groupPBM.PATCH(":id", updateExcuseByPBMHandler.UpdateExcuseHandler)
