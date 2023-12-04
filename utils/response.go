@@ -3,18 +3,23 @@ package util
 import "github.com/gin-gonic/gin"
 
 type response struct {
+	Meta interface{} `json:"meta,omitempty"`
 	Data interface{} `json:"data,omitempty"`
 }
 
-func APIResponse(c *gin.Context, StatusCode int, Data interface{}) {
+func APIResponse(c *gin.Context, StatusCode int, Data interface{}, Meta interface{}) {
 	response := response{
+		Meta: Meta,
 		Data: Data,
 	}
 
 	if StatusCode >= 400 {
-		c.JSON(StatusCode, response)
-		defer c.AbortWithStatus(StatusCode)
+		defer c.AbortWithStatusJSON(StatusCode, response)
 	} else {
 		c.JSON(StatusCode, response)
 	}
+}
+
+func ErrorRespose(c *gin.Context, StatusCode int, Msg string) {
+	defer c.AbortWithStatusJSON(StatusCode, gin.H{"message": Msg})
 }
