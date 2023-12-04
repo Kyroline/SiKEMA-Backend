@@ -5,7 +5,7 @@ import (
 )
 
 type Service interface {
-	GetAllCourseService(input InputGetAllCourse) (*[]model.Course, string)
+	GetAllCourseService(input InputGetAllCourse) (*[]model.Enrollment, string)
 }
 
 type service struct {
@@ -16,7 +16,7 @@ func NewGetAllCourseService(repository Repository) *service {
 	return &service{repository: repository}
 }
 
-func (s *service) GetAllCourseService(input InputGetAllCourse) (*[]model.Course, string) {
+func (s *service) GetAllCourseService(input InputGetAllCourse) (*[]model.Enrollment, string) {
 	res, err := s.repository.GetAllCourseRepository(input.StudentID, input.ClassID)
 
 	return res, err
