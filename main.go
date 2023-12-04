@@ -3,7 +3,6 @@ package main
 import (
 	route "attendance-is/routes"
 	util "attendance-is/utils"
-	"fmt"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -14,13 +13,6 @@ func main() {
 	util.Migrate()
 	// util.Seed()
 	r := RouterSetup()
-	claim := util.JWTClaim{
-		Uid:    1,
-		Type:   "student",
-		TypeID: 35,
-	}
-	token, _ := util.GenerateToken(claim)
-	fmt.Println(token)
 	r.Run(":8000")
 }
 
@@ -37,9 +29,9 @@ func RouterSetup() *gin.Engine {
 	// route.InitAbsentRoute(util.DB, router)
 	// route.InitClassRoute(util.DB, router)
 	route.InitEventRoute(util.DB, router)
-	// route.InitCourseRoute(util.DB, router)
+	route.InitCourseRoute(util.DB, router)
 	// route.InitStudentRoute(util.DB, router)
-	route.InitExcuseRoute(util.DB, router)
+	// route.InitExcuseRoute(util.DB, router)
 
 	return router
 }
