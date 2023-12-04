@@ -21,6 +21,6 @@ func NewGetAllExcuseRepository(db *gorm.DB) *repository {
 func (r *repository) GetAllExcuseRepository(student model.Student) (*[]model.Excuse, string) {
 	var excuses []model.Excuse
 	db := r.db.Model(excuses)
-	db.Preload("Absent").Where("absents.student_id = ?", student.ID).Find(&excuses)
+	db.Preload("Absent", "id = ?", student.ID).Find(&excuses)
 	return &excuses, ""
 }

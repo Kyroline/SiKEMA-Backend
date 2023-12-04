@@ -68,7 +68,7 @@ func (s *EventService) FinalizeEvent(data schema.FinalizeEventRequest) (*model.E
 
 	s.DB.Model(model.Event{}).Preload("Class.Students").Preload("Students").Where("id = ?", data.EventId).Find(&event)
 
-	if event.Status != 2 {
+	if event.Status == 2 {
 		return nil, errors.New("Conflict")
 	}
 

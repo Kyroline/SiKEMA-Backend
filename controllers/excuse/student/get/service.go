@@ -6,6 +6,7 @@ import (
 
 type Service interface {
 	GetExcuseService(input InputGetExcuse) (*model.Excuse, string)
+	GetExcusesService(input InputGetExcuse) (*model.Excuse, string)
 }
 
 type service struct {
@@ -17,8 +18,13 @@ func NewGetExcuseService(repository Repository) *service {
 }
 
 func (s *service) GetExcuseService(input InputGetExcuse) (*model.Excuse, string) {
-	student := model.Student{Nim: input.StudentID}
-	res, err := s.repository.GetExcuseRepository(student)
+	res, err := s.repository.GetExcuseRepository(input)
+
+	return res, err
+}
+
+func (s *service) GetExcusesService(input InputGetExcuse) (*model.Excuse, string) {
+	res, err := s.repository.GetExcusesRepository(input)
 
 	return res, err
 }

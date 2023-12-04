@@ -8,7 +8,7 @@ import (
 
 type Lecturer struct {
 	UserID *uint `json:"user_id,omitempty"`
-	User   User  `json:"user,omitempty" gorm:"foreignKey:UserID"`
+	User   User  `json:"-" gorm:"foreignKey:UserID"`
 	gorm.Model
 	Nip         string `json:"nip,omitempty" gorm:"type:varchar(25);unique"`
 	Name        string `json:"name,omitempty" gorm:"type:varchar(255)"`
