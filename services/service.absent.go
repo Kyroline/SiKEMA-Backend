@@ -42,7 +42,8 @@ func (s *AbsentService) GetAbsentByLecturer(data schema.GetAbsentByLecturerReque
 
 func (s *AbsentService) GetAbsentsByPBM(meta *schema.Metadata) (*[]model.Absent, error) {
 	var data []model.Absent
-	if err := s.DB.Model(&model.Absent{}).Preload("Event").Preload("Event.Course").Preload("Event.Lecturer").Preload("Event.Class").Count(&meta.Count).Limit(meta.ItemPerPage).Offset(meta.ItemPerPage * (meta.Page - 1)).Find(&data).Error; err != nil {
+	// if err := s.DB.Model(&model.Absent{}).Preload("Class").Preload("Event").Preload("Event.Course").Preload("Event.Lecturer").Preload("Event.Class").Count(&meta.Count).Limit(meta.ItemPerPage).Offset(meta.ItemPerPage * (meta.Page - 1)).Find(&data).Error; err != nil {
+	if err := s.DB.Model(&model.Absent{}).Preload("Student").Preload("Event").Preload("Event.Course").Preload("Event.Lecturer").Preload("Event.Class").Find(&data).Error; err != nil {
 		return nil, err
 	}
 	return &data, nil
@@ -50,7 +51,7 @@ func (s *AbsentService) GetAbsentsByPBM(meta *schema.Metadata) (*[]model.Absent,
 
 func (s *AbsentService) GetAbsentByPBM(meta *schema.Metadata, ID int) (*model.Absent, error) {
 	var data model.Absent
-	if err := s.DB.Model(&model.Absent{}).Preload("Event").Preload("Event.Course").Preload("Event.Lecturer").Preload("Event.Class").Count(&meta.Count).Limit(meta.ItemPerPage).Offset(meta.ItemPerPage*(meta.Page-1)).Find(&data, ID).Error; err != nil {
+	if err := s.DB.Model(&model.Absent{}).Preload("Student").Preload("Event").Preload("Event.Course").Preload("Event.Lecturer").Preload("Event.Class").Count(&meta.Count).Limit(meta.ItemPerPage).Offset(meta.ItemPerPage*(meta.Page-1)).Find(&data, ID).Error; err != nil {
 		return nil, err
 	}
 	return &data, nil
