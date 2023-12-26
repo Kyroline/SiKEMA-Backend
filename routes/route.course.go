@@ -26,7 +26,7 @@ func InitCourseRoute(db *gorm.DB, r *gin.Engine) {
 	courseService := service.NewCourseService(db)
 	courseHandler := course.NewCourseHandler(courseService)
 
-	groupStudent := r.Group("api/class/:classid/student/:studentid/course")
+	groupStudent := r.Group("api/classs/:classid/student/:studentid/course")
 	groupStudent.GET("", getAllCourseHandler.GetAllCourseHandler)
 	groupStudent.GET(":id", getCourseHandler.GetCourseHandler)
 

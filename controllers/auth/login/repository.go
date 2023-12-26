@@ -2,6 +2,7 @@ package loginAuth
 
 import (
 	model "attendance-is/models"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -24,34 +25,40 @@ func NewLoginAuthRepository(db *gorm.DB) *repository {
 
 func (r *repository) LoginEmailAuthRepository(email string, password string) (*model.User, string) {
 	var user model.User
-	if err := r.db.Where("email = ?", email).Find(&user).Error; err != nil {
-		return nil, "ERR_UNEXPECTED_500"
+	if err := r.db.Where("email = ?", email).Take(&user).Error; err != nil {
+		return nil, "LOGIN_UNAUTHENTICATED_401"
 	}
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) != nil {
-		return nil, "ERR_UNAUTHENTICATED_401"
+		return nil, "LOGIN_UNAUTHENTICATED_401"
 	}
 	return &user, ""
 }
 
 func (r *repository) LoginNimAuthRepository(nim string, password string) (*model.User, string) {
 	var student model.Student
-	if r.db.Model(model.Student{}).Where("nim = ?", nim).Preload("User").Find(&student).Error != nil {
-		return nil, "ERR_UNAUTHENTICATED_401"
+	r.db.Where("nim = ?", nim).Take(&student)
+	var user model.User
+	if err := r.db.Model(user).Preload("Student").Where("id = ?", student.UserID).Take(&user).Error; err != nil {
+		return nil, err.Error()
 	}
 
-	if bcrypt.CompareHashAndPassword([]byte(student.User.Password), []byte(password)) != nil {
-		return nil, "ERR_UNAUTHENTICATED_401"
+	fmt.Println(user.Student.Name)
+	fmt.Println(user.Student.Nim)
+
+	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) != nil {
+		return nil, "LOGIN_UNAUTHENTICATED_401"
 	}
-	return &student.User, ""
+	return &user, ""
 }
 
 func (r *repository) LoginNipAuthRepository(nip string, password string) (*model.User, string) {
-	var lecturer model.Lecturer
-	if r.db.Model(model.Lecturer{}).Where("nip = ?", nip).Preload("User").Find(&lecturer).Error != nil {
-		return nil, "ERR_UNAUTHENTICATED_401"
-	}
-	if bcrypt.CompareHashAndPassword([]byte(lecturer.User.Password), []byte(password)) != nil {
-		return nil, "ERR_UNAUTHENTICATED_401"
-	}
-	return &lecturer.User, ""
+	// var lecturer model.Lecturer
+	// if r.db.Model(model.Lecturer{}).Where("nip = ?", nip).Preload("User").Find(&lecturer).Error != nil {
+	// 	return nil, "LOGIN_UNAUTHENTICATED_401"
+	// }
+	// if bcrypt.CompareHashAndPassword([]byte(lecturer.User.Password), []byte(password)) != nil {
+	// 	return nil, "LOGIN_UNAUTHENTICATED_401"
+	// }
+	// return &lecturer.User, ""
+	return nil, ""
 }

@@ -18,10 +18,29 @@ func NewEventService(db *gorm.DB) EventService {
 
 func (s *EventService) GetEvent() (*[]model.Event, error) {
 	var event []model.Event
-	if err := s.DB.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Find(&event).Error; err != nil {
+	// if err := s.DB.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Find(&event).Error; err != nil {
+	if err := s.DB.Model(&event).
+		Preload("Class").
+		Preload("Course").
+		Preload("Lecturer", func(db *gorm.DB) *gorm.DB {
+			return db.Select("ID", "Nip", "Name")
+		}).Find(&event).Error; err != nil {
 		return nil, err
 	}
+	return &event, nil
+}
 
+func (s *EventService) GetEventByWhere(query interface{}, args ...interface{}) (*[]model.Event, error) {
+	var event []model.Event
+	// if err := s.DB.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Find(&event).Error; err != nil {
+	if err := s.DB.Model(&event).
+		Preload("Class").
+		Preload("Course").
+		Preload("Lecturer", func(db *gorm.DB) *gorm.DB {
+			return db.Select("ID", "Nip", "Name")
+		}).Where(query, args...).Find(&event).Error; err != nil {
+		return nil, err
+	}
 	return &event, nil
 }
 
@@ -35,7 +54,7 @@ func (s *EventService) FindEvent(id uint) (*model.Event, error) {
 }
 
 func (s *EventService) CreateEvent(data schema.CreateEventRequest) (*model.Event, error) {
-	newEvent := model.Event{LecturerID: data.LecturerId, CourseID: data.CourseId, ClassID: data.ClassId, Meet: data.Meet, Status: 0}
+	newEvent := model.Event{LecturerID: data.LecturerId, CourseID: data.CourseId, ClassID: data.ClassId, Meet: data.Meet, Status: 1}
 	if err := s.DB.Create(&newEvent).Error; err != nil {
 		return nil, err
 	}
@@ -61,6 +80,24 @@ func (s *EventService) AddStudentToEvent(data schema.AddStudentToEventRequest) (
 	return &event, nil
 }
 
+func (s *EventService) RemoveStudent(data schema.AddStudentToEventRequest) (*model.Event, error) {
+	var students []model.Student
+	if err := s.DB.Where("nim IN ?", data.StudentId).Find(&students).Error; err != nil {
+		return nil, err
+	}
+
+	var event model.Event
+	if err := s.DB.Where("id = ?", data.EventId).Find(&event).Error; err != nil {
+		return nil, err
+	}
+
+	if err := s.DB.Model(&event).Association("Students").Delete(&students); err != nil {
+		return nil, err
+	}
+
+	return &event, nil
+}
+
 func (s *EventService) FinalizeEvent(data schema.FinalizeEventRequest) (*model.Event, error) {
 	var event model.Event
 
@@ -68,7 +105,7 @@ func (s *EventService) FinalizeEvent(data schema.FinalizeEventRequest) (*model.E
 
 	s.DB.Model(model.Event{}).Preload("Class.Students").Preload("Students").Where("id = ?", data.EventId).Find(&event)
 
-	if event.Status == 2 {
+	if event.Status == 3 {
 		return nil, errors.New("Conflict")
 	}
 
@@ -77,7 +114,7 @@ func (s *EventService) FinalizeEvent(data schema.FinalizeEventRequest) (*model.E
 		IDs = append(IDs, element.ID)
 	}
 
-	s.DB.Where("class_id = ?", event.ClassID).Where("id NOT IN ?", IDs).Find(&absentStudent)
+	s.DB.Where("class_id = ?", event.ClassID).Where("id NOT IN  ?", IDs).Find(&absentStudent)
 
 	if err := s.DB.Transaction(func(tx *gorm.DB) error {
 		for _, element := range absentStudent {
@@ -88,7 +125,7 @@ func (s *EventService) FinalizeEvent(data schema.FinalizeEventRequest) (*model.E
 		return nil, err
 	}
 
-	event.Status = 2
+	event.Status = 3
 	if err := s.DB.Save(&event).Error; err != nil {
 		return nil, err
 	}

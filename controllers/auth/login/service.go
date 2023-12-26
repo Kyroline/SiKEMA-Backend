@@ -2,10 +2,12 @@ package loginAuth
 
 import (
 	model "attendance-is/models"
+	util "attendance-is/utils"
+	"strconv"
 )
 
 type Service interface {
-	LoginAuthService(input InputLoginAuth) (*model.User, string)
+	LoginAuthService(input InputLoginAuth) (string, string)
 }
 
 type service struct {
@@ -16,13 +18,44 @@ func NewLoginAuthService(repository Repository) *service {
 	return &service{repository: repository}
 }
 
-func (s *service) LoginAuthService(input InputLoginAuth) (*model.User, string) {
+func (s *service) LoginAuthService(input InputLoginAuth) (string, string) {
+	var user model.User
 	if input.Email != "" {
-		return s.repository.LoginEmailAuthRepository(input.Email, input.Password)
+		res, err := s.repository.LoginEmailAuthRepository(input.Email, input.Password)
+		if err != "" {
+			return "", err
+		}
+		user = *res
 	} else if input.Nim != "" {
-		return s.repository.LoginNimAuthRepository(input.Nim, input.Password)
+		res, err := s.repository.LoginNimAuthRepository(input.Nim, input.Password)
+		if err != "" {
+			return "", err
+		}
+		user = *res
 	} else if input.Nip != "" {
-		return s.repository.LoginNipAuthRepository(input.Nip, input.Password)
+		res, err := s.repository.LoginNipAuthRepository(input.Nip, input.Password)
+		if err != "" {
+			return "", err
+		}
+		user = *res
+	} else {
+		return "", "ERR_UNAUTHENTICATED"
 	}
-	return nil, "ERR_UNEXPECTED_500"
+	var typeID uint
+	if user.Lecturer != nil {
+		typeID = user.Lecturer.ID
+	}
+	if user.Student != nil {
+		typeID = user.Student.ID
+	}
+	claim := util.JWTClaim{
+		Uid:    strconv.FormatUint(uint64(user.ID), 10),
+		Type:   strconv.FormatUint(uint64(user.Type), 10),
+		TypeID: strconv.FormatUint(uint64(typeID), 10),
+	}
+	token, err := util.GenerateToken(claim)
+	if err != nil {
+		return "", "TOKEN_ERR_" + err.Error()
+	}
+	return token, ""
 }
