@@ -1,3 +1,19 @@
+//   SiKEMA Api
+//    version: 0.1
+//    title: SiKEMA Api
+//   Schemes: http, https
+//   Host: localhost:8000
+//   BasePath: /api/v1
+//      Consumes:
+//      - application/json
+//   Produces:
+//   - application/json
+//   SecurityDefinitions:
+//    Bearer:
+//     type: apiKey
+//     name: Authorization
+//     in: header
+//   swagger:meta
 package main
 
 import (
@@ -6,14 +22,18 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/go-openapi/runtime/middleware"
 )
 
 func main() {
 	util.Connection("root", "", "127.0.0.1", "3306", "attendance-is")
-	util.Migrate()
+	// util.Migrate()
 	// util.Seed()
 	r := RouterSetup()
-	r.Run(":8000")
+	opts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
+	sh := middleware.SwaggerUI(opts, nil)
+	r.GET("/docs", gin.WrapH(sh))
+	r.Run(":8080")
 }
 
 func RouterSetup() *gin.Engine {
@@ -26,12 +46,14 @@ func RouterSetup() *gin.Engine {
 		AllowWildcard: true,
 	}))
 
-	// route.InitAbsentRoute(util.DB, router)
-	// route.InitClassRoute(util.DB, router)
+	route.InitAbsentRoute(util.DB, router)
+	route.InitClassRoute(util.DB, router)
 	route.InitEventRoute(util.DB, router)
 	route.InitCourseRoute(util.DB, router)
-	// route.InitStudentRoute(util.DB, router)
-	// route.InitExcuseRoute(util.DB, router)
+	route.InitStudentRoute(util.DB, router)
+	route.InitAuthRoute(util.DB, router)
+	route.InitExcuseRoute(util.DB, router)
+	route.InitCompensationRoute(util.DB, router)
 
 	return router
 }
