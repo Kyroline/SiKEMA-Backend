@@ -11,16 +11,16 @@ import (
 )
 
 type JWTClaim struct {
-	Uid    uint
+	Uid    string
 	Type   string
-	TypeID uint
+	TypeID string
 }
 
 func GenerateToken(claim JWTClaim) (string, error) {
 	token_lifetime, _ := strconv.Atoi(GetEnv("TOKEN_LIFETIME"))
 
 	claims := jwt.MapClaims{}
-	claims["uid"] = uint(claim.Uid)
+	claims["uid"] = claim.Uid
 	claims["type"] = claim.Type
 	claims["type_id"] = claim.TypeID
 	claims["exp"] = time.Now().Add(time.Second * time.Duration(token_lifetime)).Unix()
@@ -67,9 +67,9 @@ func ExtractTokenClaim(tokenString string) (JWTClaim, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
 		var claim JWTClaim
-		uid, _ := claims["uid"].(uint)
+		uid, _ := claims["uid"].(string)
 		utype, _ := claims["type"].(string)
-		typeID, _ := claims["type_id"].(uint)
+		typeID, _ := claims["type_id"].(string)
 		claim.Uid = uid
 		claim.Type = utype
 		claim.TypeID = typeID

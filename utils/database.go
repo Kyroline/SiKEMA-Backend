@@ -33,6 +33,7 @@ func Migrate() {
 		&model.Excuse{},
 		&model.Kompen{},
 		&model.SP{},
+		&model.PBM{},
 		// &model.Enrollment{},
 	)
 }
