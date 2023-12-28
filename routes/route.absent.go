@@ -12,14 +12,10 @@ func InitAbsentRoute(db *gorm.DB, r *gin.Engine) {
 	absentService := service.NewAbsentService(db)
 	absentHandler := absent.NewAbsentHandler(absentService)
 
-	group := r.Group("/api/absent")
-	group.DELETE(":id")
+	group := r.Group("/api/pbm/absent")
 	group.GET("", absentHandler.GetAbsentsByPBM)
 	group.GET(":id/excuse", absentHandler.GetExcuse)
 	group.GET(":id", absentHandler.GetAbsentByPBM)
-	group.PATCH(":id")
-	group.POST("")
-	group.PUT(":id")
 
 	studentGroup := r.Group("/api/student/:studentid/absent")
 	studentGroup.GET("", absentHandler.GetAbsentsByStudent)
