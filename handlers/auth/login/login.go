@@ -2,6 +2,7 @@ package loginAuthHandler
 
 import (
 	loginAuth "attendance-is/controllers/auth/login"
+	model "attendance-is/models"
 	util "attendance-is/utils"
 	"net/http"
 
@@ -9,7 +10,8 @@ import (
 )
 
 type response struct {
-	Token string `json:"access_token"`
+	Token    string     `json:"access_token"`
+	UserData model.User `json:"user_data"`
 }
 
 type handler struct {
@@ -24,8 +26,8 @@ func (h *handler) LoginAuthHandler(c *gin.Context) {
 	var input loginAuth.InputLoginAuth
 	c.ShouldBindJSON(&input)
 
-	res, err := h.service.LoginAuthService(input)
-	response := response{Token: res}
+	user, token, err := h.service.LoginAuthService(input)
+	response := response{Token: token, UserData: *user}
 	switch err {
 	case "LOGIN_UNAUTHENTICATED_401":
 		util.ErrorRespose(c, http.StatusUnauthorized, "Unauthenticated")

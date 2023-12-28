@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	LoginAuthService(input InputLoginAuth) (string, string)
+	LoginAuthService(input InputLoginAuth) (*model.User, string, string)
 }
 
 type service struct {
@@ -18,28 +18,28 @@ func NewLoginAuthService(repository Repository) *service {
 	return &service{repository: repository}
 }
 
-func (s *service) LoginAuthService(input InputLoginAuth) (string, string) {
+func (s *service) LoginAuthService(input InputLoginAuth) (*model.User, string, string) {
 	var user model.User
 	if input.Email != "" {
 		res, err := s.repository.LoginEmailAuthRepository(input.Email, input.Password)
 		if err != "" {
-			return "", err
+			return nil, "", err
 		}
 		user = *res
 	} else if input.Nim != "" {
 		res, err := s.repository.LoginNimAuthRepository(input.Nim, input.Password)
 		if err != "" {
-			return "", err
+			return nil, "", err
 		}
 		user = *res
 	} else if input.Nip != "" {
 		res, err := s.repository.LoginNipAuthRepository(input.Nip, input.Password)
 		if err != "" {
-			return "", err
+			return nil, "", err
 		}
 		user = *res
 	} else {
-		return "", "ERR_UNAUTHENTICATED"
+		return nil, "", "ERR_UNAUTHENTICATED"
 	}
 	var typeID uint
 	if user.Lecturer != nil {
@@ -55,7 +55,7 @@ func (s *service) LoginAuthService(input InputLoginAuth) (string, string) {
 	}
 	token, err := util.GenerateToken(claim)
 	if err != nil {
-		return "", "TOKEN_ERR_" + err.Error()
+		return nil, "", "TOKEN_ERR_" + err.Error()
 	}
-	return token, ""
+	return &user, token, ""
 }
