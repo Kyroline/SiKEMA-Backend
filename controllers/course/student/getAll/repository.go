@@ -2,11 +2,14 @@ package getAllCourse
 
 import (
 	model "attendance-is/models"
+	"errors"
 
 	"gorm.io/gorm"
 )
 
 type Repository interface {
+	GetStudent(StudentID string) (*model.Student, string)
+	GetStudentCourse(student *model.Student) (*[]model.Enrollment, string)
 	GetAllCourseRepository(StudentID string, ClassID string) (*[]model.Enrollment, string)
 }
 
@@ -16,6 +19,29 @@ type repository struct {
 
 func NewGetAllCourseRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
+}
+
+func (r *repository) GetStudent(StudentID string) (*model.Student, string) {
+	var student model.Student
+	if err := r.db.Where("id = ?", StudentID).Take(&student).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, "STUDENT_NOTFOUND_404"
+		}
+		return nil, "STUDENT_UNEXPECTED_500 : " + err.Error()
+	}
+	return &student, ""
+}
+
+func (r *repository) GetStudentCourse(student *model.Student) (*[]model.Enrollment, string) {
+	var courses []model.Enrollment
+	if err := r.db.Model(model.Enrollment{}).Preload("Course").Preload("Lecturers").Where("class_id = ?", student.ClassID).Find(&courses).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, "COURSE_NOTFOUND_404"
+		}
+		return nil, "COURSE_UNEXPECTED_500 : " + err.Error()
+	}
+
+	return &courses, ""
 }
 
 func (r *repository) GetAllCourseRepository(StudentID string, ClassID string) (*[]model.Enrollment, string) {

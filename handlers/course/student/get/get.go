@@ -21,7 +21,8 @@ func (h *handler) GetCourseHandler(c *gin.Context) {
 	input.ClassID = c.Param("classid")
 	input.CourseID = c.Param("id")
 
-	res, err := h.service.GetCourseService(input)
+	// res, err := h.service.GetCourseService(input)
+	res, err := h.service.GetCourse(input)
 
 	if err != "" {
 		c.JSON(http.StatusInternalServerError, gin.H{

@@ -20,7 +20,7 @@ func (h *handler) GetAllCourseHandler(c *gin.Context) {
 	input.StudentID = c.Param("studentid")
 	input.ClassID = c.Param("classid")
 
-	res, err := h.service.GetAllCourseService(input)
+	res, err := h.service.GetAllCourse(input)
 
 	if err != "" {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -29,7 +29,7 @@ func (h *handler) GetAllCourseHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusInternalServerError, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"data": res,
 	})
 }
