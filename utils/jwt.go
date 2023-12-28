@@ -67,12 +67,14 @@ func ExtractTokenClaim(tokenString string) (JWTClaim, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
 		var claim JWTClaim
+		// fmt.Println("Before converted : " + claims["uid"].(string))
 		uid, _ := claims["uid"].(string)
 		utype, _ := claims["type"].(string)
 		typeID, _ := claims["type_id"].(string)
 		claim.Uid = uid
 		claim.Type = utype
 		claim.TypeID = typeID
+		// fmt.Println("After converted : " + claim.Uid)
 		return claim, nil
 	}
 	return JWTClaim{}, nil

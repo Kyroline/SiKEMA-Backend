@@ -2,7 +2,6 @@ package middleware
 
 import (
 	util "attendance-is/utils"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +15,7 @@ func Auth() gin.HandlerFunc {
 				"message": "Unauthenticated",
 			})
 			defer c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 		claim, _ := util.ExtractTokenClaim(token)
 		c.Set("user", claim)
@@ -23,76 +23,51 @@ func Auth() gin.HandlerFunc {
 	})
 }
 
-type Claim struct {
-	Uid    string
-	Type   string
-	TypeID string
+func checkClaim(c *gin.Context, allowedTypes []string, paramID string) bool {
+	val, exist := c.Get("user")
+	claim, _ := val.(util.JWTClaim)
+
+	if !exist {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Unauthenticated",
+		})
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return false
+	}
+
+	for _, allowedType := range allowedTypes {
+		if claim.Type == allowedType && claim.TypeID == paramID {
+			return true
+		}
+	}
+
+	c.JSON(http.StatusForbidden, gin.H{
+		"message": "Unauthorized",
+	})
+	c.AbortWithStatus(http.StatusForbidden)
+	return false
 }
 
 func IsStudent() gin.HandlerFunc {
 	return gin.HandlerFunc(func(c *gin.Context) {
-		val, exist := c.Get("user")
-		// id, _ := strconv.Atoi(c.Param("studentid"))
-		claim, _ := val.(Claim)
-
-		if !exist {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthenticated",
-			})
-			defer c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
-		fmt.Println(claim.TypeID)
-		fmt.Println(claim.Type)
-		fmt.Println(claim.Uid)
-
-		if claim.Type != "student" || claim.TypeID != c.Param("studentid") {
-			c.JSON(http.StatusForbidden, gin.H{
-				"message": "Unauthorized",
-			})
-			defer c.AbortWithStatus(http.StatusForbidden)
+		if checkClaim(c, []string{"student", "0"}, c.Param("studentid")) {
+			c.Next()
 		}
 	})
 }
 
 func IsLecturer() gin.HandlerFunc {
 	return gin.HandlerFunc(func(c *gin.Context) {
-		val, exist := c.Get("user")
-		claim, _ := val.(util.JWTClaim)
-
-		if !exist {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthenticated",
-			})
-			defer c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
-		if claim.Type != "lecturer" {
-			c.JSON(http.StatusForbidden, gin.H{
-				"message": "Unauthorized",
-			})
-			defer c.AbortWithStatus(http.StatusForbidden)
+		if checkClaim(c, []string{"lecturer", "1"}, c.Param("lecturerid")) {
+			c.Next()
 		}
 	})
 }
 
 func IsPBM() gin.HandlerFunc {
 	return gin.HandlerFunc(func(c *gin.Context) {
-		val, exist := c.Get("user")
-		claim, _ := val.(util.JWTClaim)
-
-		if !exist {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthenticated",
-			})
-			defer c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
-		if claim.Type != "pbm" {
-			c.JSON(http.StatusForbidden, gin.H{
-				"message": "Unauthorized",
-			})
-			defer c.AbortWithStatus(http.StatusForbidden)
+		if checkClaim(c, []string{"pbm", "2"}, "") {
+			c.Next()
 		}
 	})
 }
