@@ -19,10 +19,10 @@ package main
 import (
 	route "attendance-is/routes"
 	util "attendance-is/utils"
+	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/go-openapi/runtime/middleware"
 )
 
 func main() {
@@ -30,9 +30,23 @@ func main() {
 	// util.Migrate()
 	// util.Seed()
 	r := RouterSetup()
-	opts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
-	sh := middleware.SwaggerUI(opts, nil)
-	r.GET("/docs", gin.WrapH(sh))
+	r.StaticFS("/files", http.Dir("public"))
+
+	r.POST("/upload", func(c *gin.Context) {
+		// single file
+		file, err := c.FormFile("file")
+		if err != nil {
+			// Handle the error, e.g., log it or return an error response to the client
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		// Upload the file to specific dst.
+		c.SaveUploadedFile(file, "public/"+file.Filename)
+
+		c.String(http.StatusOK, file.Filename)
+	})
+
 	r.Run(":8080")
 }
 
@@ -40,7 +54,7 @@ func RouterSetup() *gin.Engine {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:  []string{"*"},
+		AllowOrigins:  []string{"*", "http://192.168.137.172"},
 		AllowMethods:  []string{"*"},
 		AllowHeaders:  []string{"*"},
 		AllowWildcard: true,

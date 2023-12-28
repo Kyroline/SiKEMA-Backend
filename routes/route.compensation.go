@@ -23,4 +23,7 @@ func InitCompensationRoute(db *gorm.DB, r *gin.Engine) {
 
 	groupPBM := r.Group("api/compensation")
 	groupPBM.GET("", getCompensationHandler.GetCompensationHandler)
+
+	groupStudent := r.Group("api/student/:studentid/compensation")
+	groupStudent.GET("")
 }

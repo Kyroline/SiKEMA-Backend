@@ -2,6 +2,7 @@ package route
 
 import (
 	course "attendance-is/controllers/course"
+	middleware "attendance-is/middlewares"
 
 	getCourseStudent "attendance-is/controllers/course/student/get"
 	getAllCourseStudent "attendance-is/controllers/course/student/getAll"
@@ -26,11 +27,11 @@ func InitCourseRoute(db *gorm.DB, r *gin.Engine) {
 	courseService := service.NewCourseService(db)
 	courseHandler := course.NewCourseHandler(courseService)
 
-	groupStudent := r.Group("api/classs/:classid/student/:studentid/course")
+	groupStudent := r.Group("api/student/:studentid/course", middleware.Auth(), middleware.IsStudent())
 	groupStudent.GET("", getAllCourseHandler.GetAllCourseHandler)
 	groupStudent.GET(":id", getCourseHandler.GetCourseHandler)
 
-	groupLecturer := r.Group("api/lecturer/:lecturerid/course")
+	groupLecturer := r.Group("api/lecturer/:lecturerid/course", middleware.Auth(), middleware.IsLecturer())
 	groupLecturer.GET("", courseHandler.GetCourseByLecturer)
 
 	groupPBM := r.Group("api/course")
