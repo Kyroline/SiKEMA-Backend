@@ -109,12 +109,16 @@ func (s *EventService) FinalizeEvent(data schema.FinalizeEventRequest) (*model.E
 		return nil, errors.New("Conflict")
 	}
 
-	var IDs []uint
-	for _, element := range event.Students {
-		IDs = append(IDs, element.ID)
-	}
+	if len(event.Students) > 0 {
+		var IDs []uint
+		for _, element := range event.Students {
+			IDs = append(IDs, element.ID)
+		}
 
-	s.DB.Where("class_id = ?", event.ClassID).Where("id NOT IN  ?", IDs).Find(&absentStudent)
+		s.DB.Where("class_id = ?", event.ClassID).Where("id NOT IN ?", IDs).Find(&absentStudent)
+	} else {
+		s.DB.Where("class_id = ?", event.ClassID).Find(&absentStudent)
+	}
 
 	if err := s.DB.Transaction(func(tx *gorm.DB) error {
 		for _, element := range absentStudent {

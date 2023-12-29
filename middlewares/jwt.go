@@ -36,7 +36,13 @@ func checkClaim(c *gin.Context, allowedTypes []string, paramID string) bool {
 	}
 
 	for _, allowedType := range allowedTypes {
-		if claim.Type == allowedType && claim.TypeID == paramID {
+		if claim.Type != allowedType {
+			return false
+		}
+
+		if claim.TypeID == paramID {
+			return true
+		} else if paramID == "" {
 			return true
 		}
 	}

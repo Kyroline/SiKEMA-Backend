@@ -7,6 +7,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type InputGetCourseByLecturer struct {
+	LecturerID string
+}
+
 type CourseService struct {
 	DB *gorm.DB
 }
@@ -15,10 +19,10 @@ func NewCourseService(db *gorm.DB) CourseService {
 	return CourseService{DB: db}
 }
 
-func (s *CourseService) GetCourseByLecturer() (*[]model.Enrollment, error) {
+func (s *CourseService) GetCourseByLecturer(input InputGetCourseByLecturer) (*[]model.Enrollment, error) {
 	//
 	var lecturer model.Lecturer
-	if err := s.DB.Where("id = ?", 1).Find(&lecturer).Error; err != nil {
+	if err := s.DB.Where("id = ?", input.LecturerID).Find(&lecturer).Error; err != nil {
 		return nil, err
 	}
 	// s.DB.Find(&lecturer)
@@ -31,9 +35,9 @@ func (s *CourseService) GetCourseByLecturer() (*[]model.Enrollment, error) {
 	return &courses, nil
 }
 
-func (s *CourseService) GetCourseByPBM(meta *schema.Metadata) (*[]model.Course, error) {
-	var courses []model.Course
-	s.DB.Model(&model.Course{}).Preload("Classes").Preload("Lecturers").Count(&meta.Count).Limit(meta.ItemPerPage).Offset((meta.Page - 1) * meta.ItemPerPage).Find(&courses)
+func (s *CourseService) GetCourseByPBM(meta *schema.Metadata) (*[]model.Enrollment, error) {
+	var courses []model.Enrollment
+	s.DB.Model(&courses).Preload("Class").Preload("Course").Preload("Lecturers").Find(&courses)
 
 	return &courses, nil
 }
