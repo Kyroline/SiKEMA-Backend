@@ -1,8 +1,8 @@
 package updateSP
 
 type InputUpdateSP struct {
-	StudentID uint
-	Semester  uint
-	Level     uint
-	Status    uint
+	StudentID uint `json:"student_id"`
+	Semester  uint `json:"semester"`
+	Level     uint `json:"level"`
+	Status    uint `json:"status"`
 }
