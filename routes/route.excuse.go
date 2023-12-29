@@ -63,7 +63,7 @@ func InitExcuseRoute(db *gorm.DB, router *gin.Engine) {
 	groupStudent.PATCH("", updateExcuseHandler.UpdateExcuseHandler)
 	groupStudent.PUT("", updateExcuseHandler.UpdateExcuseHandler)
 
-	groupPBM := router.Group("api/excuse", middleware.Auth(), middleware.IsPBM())
+	groupPBM := router.Group("api/pbm/excuse", middleware.Auth(), middleware.IsPBM())
 	groupPBM.GET("", getExcuseByPBMHandler.GetExcuseHandler)
 	groupPBM.GET(":id", getAllExcuseByPBMHandler.GetAllExcuseHandler)
 	groupPBM.PATCH(":id", updateExcuseByPBMHandler.UpdateExcuseHandler)

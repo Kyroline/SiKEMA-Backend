@@ -3,6 +3,7 @@ package route
 import (
 	getCompensationStudent "attendance-is/controllers/compensation/pbm/get"
 	getCompensationHandler "attendance-is/handlers/compensation/pbm/get"
+	middleware "attendance-is/middlewares"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -21,9 +22,9 @@ func InitCompensationRoute(db *gorm.DB, r *gin.Engine) {
 	// groupStudent.GET("", getAllCompensationHandler.GetAllCompensationHandler)
 	// groupStudent.GET(":id", getCompensationHandler.GetCompensationHandler)
 
-	groupPBM := r.Group("api/compensation")
+	groupPBM := r.Group("api/pbm/compensation", middleware.Auth(), middleware.IsPBM())
 	groupPBM.GET("", getCompensationHandler.GetCompensationHandler)
 
-	groupStudent := r.Group("api/student/:studentid/compensation")
+	groupStudent := r.Group("api/student/:studentid/compensation", middleware.Auth(), middleware.IsStudent())
 	groupStudent.GET("")
 }

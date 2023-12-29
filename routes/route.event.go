@@ -2,6 +2,7 @@ package route
 
 import (
 	event "attendance-is/controllers/event"
+	middleware "attendance-is/middlewares"
 	service "attendance-is/services"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,7 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	eventHandler := event.NewEventHandler(eventService)
 
 	//from lecturer
-	groupLecturer := r.Group("/api/lecturer/:lecturerid/event")
+	groupLecturer := r.Group("/api/lecturer/:lecturerid/event", middleware.Auth(), middleware.IsLecturer())
 	groupLecturer.DELETE(":id") //can only delete recently created event
 	groupLecturer.GET("", eventHandler.GetEvent)
 	groupLecturer.GET(":id", eventHandler.FindEvent)
@@ -23,7 +24,7 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	groupLecturer.DELETE(":id/student", eventHandler.RemoveStudent)
 	groupLecturer.PUT(":id", eventHandler.FinalizeEventHandler)
 
-	groupStudent := r.Group("/api/student/:studentid/event")
+	groupStudent := r.Group("/api/student/:studentid/event", middleware.Auth(), middleware.IsStudent())
 	groupStudent.GET("")
 	groupStudent.GET(":id")
 }
