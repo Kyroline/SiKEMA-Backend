@@ -25,7 +25,7 @@ func NewLoginAuthRepository(db *gorm.DB) *repository {
 
 func (r *repository) LoginEmailAuthRepository(email string, password string) (*model.User, string) {
 	var user model.User
-	if err := r.db.Where("email = ?", email).Take(&user).Error; err != nil {
+	if err := r.db.Model(user).Preload("Student").Preload("Lecturer").Preload("PBM").Where("email = ?", email).Take(&user).Error; err != nil {
 		return nil, "LOGIN_UNAUTHENTICATED_401"
 	}
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) != nil {
