@@ -68,6 +68,7 @@ func RouterSetup() *gin.Engine {
 	route.InitAuthRoute(util.DB, router)
 	route.InitExcuseRoute(util.DB, router)
 	route.InitCompensationRoute(util.DB, router)
+	route.InitSPRoute(util.DB, router)
 
 	return router
 }

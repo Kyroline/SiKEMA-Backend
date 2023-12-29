@@ -25,12 +25,19 @@ func (h *handler) GetSPHandler(c *gin.Context) {
 	}
 
 	res, err := h.service.GetSPService(input)
-	switch err {
-	case "ERR_CONFLICT_409":
-		util.ErrorRespose(c, http.StatusConflict, "SP ID already exist")
-		return
-	default:
-		util.APIResponse(c, http.StatusOK, res, nil)
-		return
+	if err != "" {
+		switch err {
+		case "ERR_CONFLICT_409":
+			util.ErrorRespose(c, http.StatusConflict, "SP ID already exist")
+			return
+		case "ERR_NOTFOUND_404":
+			util.ErrorRespose(c, http.StatusNotFound, "SP ID not found")
+			return
+		default:
+			util.ErrorRespose(c, http.StatusInternalServerError, "Unexpected Error : "+err)
+			return
+		}
 	}
+
+	util.APIResponse(c, http.StatusOK, res, nil)
 }

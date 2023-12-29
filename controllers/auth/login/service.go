@@ -48,6 +48,9 @@ func (s *service) LoginAuthService(input InputLoginAuth) (*model.User, string, s
 	if user.Student != nil {
 		typeID = user.Student.ID
 	}
+	if user.PBM != nil {
+		typeID = user.PBM.ID
+	}
 	claim := util.JWTClaim{
 		Uid:    strconv.FormatUint(uint64(user.ID), 10),
 		Type:   strconv.FormatUint(uint64(user.Type), 10),

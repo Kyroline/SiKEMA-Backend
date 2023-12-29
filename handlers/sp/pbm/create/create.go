@@ -21,15 +21,16 @@ func (h *handler) CreateSPHandler(c *gin.Context) {
 	c.ShouldBindJSON(&input)
 
 	res, err := h.service.CreateSPService(input)
-	switch err {
-	case "ERR_CONFLICT_409":
-		util.ErrorRespose(c, http.StatusConflict, "SP ID already exist")
-		return
-	case "ERR_UNEXPECTED_500":
-		util.ErrorRespose(c, http.StatusInternalServerError, "There's an error creating new resource")
-		return
-	default:
-		util.APIResponse(c, http.StatusOK, res, nil)
-		return
+	if err != "" {
+		switch err {
+		case "ERR_CONFLICT_409":
+			util.ErrorRespose(c, http.StatusConflict, "SP ID already exist")
+			return
+		case "ERR_UNEXPECTED_500":
+			util.ErrorRespose(c, http.StatusInternalServerError, "There's an error creating new resource")
+			return
+		}
 	}
+
+	util.APIResponse(c, http.StatusOK, res, nil)
 }

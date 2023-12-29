@@ -11,6 +11,7 @@ import (
 	getSPHandler "attendance-is/handlers/sp/pbm/get"
 	getAllSPHandler "attendance-is/handlers/sp/pbm/getAll"
 	updateSPHandler "attendance-is/handlers/sp/pbm/update"
+	middleware "attendance-is/middlewares"
 
 	getSPStudent "attendance-is/controllers/sp/student/get"
 	getAllSPStudent "attendance-is/controllers/sp/student/getAll"
@@ -50,7 +51,7 @@ func InitSPRoute(db *gorm.DB, r *gin.Engine) {
 	getAllSPStudentService := getAllSPStudent.NewGetAllSPService(getAllSPStudentRepository)
 	getAllSPStudentHandler := getAllSPHandlerStudent.NewGetAllSPHandler(getAllSPStudentService)
 
-	groupPBM := r.Group("api/pbm/sp")
+	groupPBM := r.Group("api/pbm/sp", middleware.Auth(), middleware.IsPBM())
 	groupPBM.GET("", getSPPBMHandler.GetSPHandler)
 	groupPBM.GET(":id", getAllSPPBMHandler.GetAllSPHandler)
 	groupPBM.PATCH(":id", updateSPPBMHandler.UpdateSPHandler)
@@ -58,7 +59,7 @@ func InitSPRoute(db *gorm.DB, r *gin.Engine) {
 	groupPBM.PUT(":id", updateSPPBMHandler.UpdateSPHandler)
 	groupPBM.DELETE(":id", deleteSPPBMHandler.DeleteSPHandler)
 
-	groupStudent := r.Group("api/student/:studentid/sp")
+	groupStudent := r.Group("api/student/:studentid/sp", middleware.Auth(), middleware.IsStudent())
 	groupStudent.GET("", getSPStudentHandler.GetSPHandler)
 	groupStudent.GET(":id", getAllSPStudentHandler.GetAllSPHandler)
 }

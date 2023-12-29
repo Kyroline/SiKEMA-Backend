@@ -2,6 +2,7 @@ package course
 
 import (
 	schema "attendance-is/schemas"
+	service "attendance-is/services"
 	"net/http"
 	"strconv"
 
@@ -9,7 +10,8 @@ import (
 )
 
 func (h *handler) GetCourseByLecturer(c *gin.Context) {
-	courses, err := h.service.GetCourseByLecturer()
+	input := service.InputGetCourseByLecturer{LecturerID: c.Param("lecturerid")}
+	courses, err := h.service.GetCourseByLecturer(input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
