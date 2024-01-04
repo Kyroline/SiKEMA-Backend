@@ -135,13 +135,13 @@ func Seed() {
 	DB.Save(&lecturer)
 
 	courses := []model.Course{
-		{Code: "432-191-502", Name: "Desain dan Perancangan Sistem Informasi"},
-		{Code: "432-191-503", Name: "Sistem Multimedia"},
-		{Code: "432-191-504", Name: "Internet of Things (IoT)"},
-		{Code: "432-191-505", Name: "Data Mining"},
-		{Code: "432-191-506", Name: "Komputasi Awan"},
-		{Code: "432-191-508", Name: "Keamanan, Kesehatan, dan Keselamatan Kerja"},
-		{Code: "432-191-509", Name: "Interaksi Manusia dan Komputer"},
+		{Code: "432-191-502", Name: "Desain dan Perancangan Sistem Informasi", Hours: 5},
+		{Code: "432-191-503", Name: "Sistem Multimedia", Hours: 5},
+		{Code: "432-191-504", Name: "Internet of Things (IoT)", Hours: 5},
+		{Code: "432-191-505", Name: "Data Mining", Hours: 5},
+		{Code: "432-191-506", Name: "Komputasi Awan", Hours: 5},
+		{Code: "432-191-508", Name: "Keamanan, Kesehatan, dan Keselamatan Kerja", Hours: 5},
+		{Code: "432-191-509", Name: "Interaksi Manusia dan Komputer", Hours: 2},
 	}
 
 	DB.Save(&courses)
