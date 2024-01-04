@@ -4,21 +4,50 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	absent "attendance-is/controllers/absent"
 	middleware "attendance-is/middlewares"
-	service "attendance-is/services"
+
+	getAbsent "attendance-is/controllers/absent/student/get"
+	showAbsent "attendance-is/controllers/absent/student/show"
+
+	getAbsentHandler "attendance-is/handlers/absent/student/get"
+	showAbsentHandler "attendance-is/handlers/absent/student/show"
+
+	getAbsentPBM "attendance-is/controllers/absent/pbm/get"
+	getAbsentExcusePBM "attendance-is/controllers/absent/pbm/get_excuse"
+	showAbsentPBM "attendance-is/controllers/absent/pbm/show"
+
+	getAbsentHandlerPBM "attendance-is/handlers/absent/pbm/get"
+	getAbsentExcuseHandlerPBM "attendance-is/handlers/absent/pbm/get_excuse"
+	showAbsentHandlerPBM "attendance-is/handlers/absent/pbm/show"
 )
 
 func InitAbsentRoute(db *gorm.DB, r *gin.Engine) {
-	absentService := service.NewAbsentService(db)
-	absentHandler := absent.NewAbsentHandler(absentService)
+	getAbsentRepo := getAbsent.NewGetAbsentRepository(db)
+	getAbsentService := getAbsent.NewGetAbsentService(getAbsentRepo)
+	getAbsentHandler := getAbsentHandler.NewGetAbsentHandler(getAbsentService)
+
+	showAbsentRepo := showAbsent.NewShowAbsentRepository(db)
+	showAbsentService := showAbsent.NewShowAbsentService(showAbsentRepo)
+	showAbsentHandler := showAbsentHandler.NewShowAbsentHandler(showAbsentService)
+
+	getAbsentPBMRepo := getAbsentPBM.NewGetAbsentRepository(db)
+	getAbsentPBMService := getAbsentPBM.NewGetAbsentService(getAbsentPBMRepo)
+	getAbsentPBMHandler := getAbsentHandlerPBM.NewGetAbsentHandler(getAbsentPBMService)
+
+	showAbsentPBMRepo := showAbsentPBM.NewShowAbsentRepository(db)
+	showAbsentPBMService := showAbsentPBM.NewShowAbsentService(showAbsentPBMRepo)
+	showAbsentPBMHandler := showAbsentHandlerPBM.NewShowAbsentHandler(showAbsentPBMService)
+
+	getAbsentExcusePBMRepo := getAbsentExcusePBM.NewGetAbsentExcuseRepository(db)
+	getAbsentExcusePBMService := getAbsentExcusePBM.NewGetAbsentExcuseService(getAbsentExcusePBMRepo)
+	getAbsentExcusePBMHandler := getAbsentExcuseHandlerPBM.NewShowAbsentHandler(getAbsentExcusePBMService)
 
 	group := r.Group("/api/pbm/absent", middleware.Auth(), middleware.IsPBM())
-	group.GET("", absentHandler.GetAbsentsByPBM)
-	group.GET(":id/excuse", absentHandler.GetExcuse)
-	group.GET(":id", absentHandler.GetAbsentByPBM)
+	group.GET("", getAbsentPBMHandler.GetAbsentHandler)
+	group.GET(":id/excuse", getAbsentExcusePBMHandler.ShowAbsentHandler)
+	group.GET(":id", showAbsentPBMHandler.ShowAbsentHandler)
 
-	studentGroup := r.Group("/api/student/:studentid/absent", middleware.Auth(), middleware.IsStudent())
-	studentGroup.GET("", absentHandler.GetAbsentsByStudent)
-	studentGroup.GET(":id", absentHandler.GetAbsentByStudent)
+	studentGroup := r.Group("/api/student/:studentid", middleware.Auth(), middleware.IsStudent())
+	studentGroup.GET("absent", getAbsentHandler.GetAbsentHandler)
+	studentGroup.GET("event/:eventid/absent", showAbsentHandler.ShowAbsentHandler)
 }

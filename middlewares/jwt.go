@@ -36,15 +36,14 @@ func checkClaim(c *gin.Context, allowedTypes []string, paramID string) bool {
 	}
 
 	for _, allowedType := range allowedTypes {
-		if claim.Type != allowedType {
-			return false
+		if claim.Type == allowedType {
+			if claim.TypeID == paramID {
+				return true
+			} else if paramID == "" {
+				return true
+			}
 		}
 
-		if claim.TypeID == paramID {
-			return true
-		} else if paramID == "" {
-			return true
-		}
 	}
 
 	c.JSON(http.StatusForbidden, gin.H{

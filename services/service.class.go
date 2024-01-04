@@ -2,6 +2,7 @@ package service
 
 import (
 	model "attendance-is/models"
+
 	schema "attendance-is/schemas/class"
 
 	"gorm.io/gorm"

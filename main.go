@@ -20,34 +20,73 @@ import (
 	route "attendance-is/routes"
 	util "attendance-is/utils"
 	"net/http"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	"flag"
+	"fmt"
 )
 
 func main() {
-	util.Connection("root", "", "127.0.0.1", "3306", "attendance-is")
-	// util.Migrate()
-	// util.Seed()
+	isMigrate := flag.Bool("migrate", false, "If set to true, performs database migration before starting the webservice. Optional, use this flag to ensure the required database structure is available before running the application.")
+	isSeed := flag.Bool("seed", false, "Seeds the database with initial data before starting the webservice. Optional, use this flag to populate the database with predefined data.")
+	host := flag.String("host", "", "Specifies the host address for deploying the webservice. Use this flag to define the desired host address.")
+	port := flag.String("port", "8080", "Specifies the port number for deploying the webservice. Use this flag to define the desired host address.")
+
+	flag.Parse()
+
+	dbUser := os.Getenv("ATTENDANCE_DB_USER")
+	if dbUser == "" {
+		dbUser = "root"
+	}
+
+	dbPass := os.Getenv("ATTENDANCE_DB_PASSWORD")
+
+	dbHost := os.Getenv("ATTENDANCE_DB_HOST")
+	if dbHost == "" {
+		dbHost = "127.0.0.1"
+	}
+
+	dbPort := os.Getenv("ATTENDANCE_DB_PORT")
+	if dbPort == "" {
+		dbPort = "3306"
+	}
+
+	dbName := os.Getenv("ATTENDANCE_DB_NAME")
+	if dbName == "" {
+		dbName = "attendance-is"
+	}
+
+	util.Connection(dbUser, dbPass, dbHost, dbPort, dbName)
 	r := RouterSetup()
 	r.StaticFS("/files", http.Dir("public"))
 
 	r.POST("/upload", func(c *gin.Context) {
-		// single file
+
 		file, err := c.FormFile("file")
 		if err != nil {
-			// Handle the error, e.g., log it or return an error response to the client
+
 			c.String(http.StatusBadRequest, err.Error())
 			return
 		}
 
-		// Upload the file to specific dst.
 		c.SaveUploadedFile(file, "public/"+file.Filename)
 
 		c.String(http.StatusOK, file.Filename)
 	})
 
-	r.Run(":8080")
+	if *isMigrate {
+		util.Migrate()
+	}
+
+	if *isSeed {
+		util.Seed()
+	}
+	fmt.Println(*host + ":" + *port)
+
+	r.Run(*host + ":" + *port)
 }
 
 func RouterSetup() *gin.Engine {
