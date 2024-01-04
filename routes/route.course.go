@@ -1,14 +1,18 @@
 package route
 
 import (
-	course "attendance-is/controllers/course"
 	middleware "attendance-is/middlewares"
 
 	getCourseStudent "attendance-is/controllers/course/student/get"
 	getAllCourseStudent "attendance-is/controllers/course/student/getAll"
 	getCourseHandler "attendance-is/handlers/course/student/get"
 	getAllCourseHandler "attendance-is/handlers/course/student/getAll"
-	service "attendance-is/services"
+
+	getCourseLecturer "attendance-is/controllers/course/lecturer/get"
+	getCourseLecturerHandler "attendance-is/handlers/course/lecturer/get"
+
+	getCoursePBM "attendance-is/controllers/course/pbm/get"
+	getCoursePBMHandler "attendance-is/handlers/course/pbm/get"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -24,16 +28,21 @@ func InitCourseRoute(db *gorm.DB, r *gin.Engine) {
 	getAllCourseService := getAllCourseStudent.NewGetAllCourseService(getAllCourseRepository)
 	getAllCourseHandler := getAllCourseHandler.NewGetAllCourseHandler(getAllCourseService)
 
-	courseService := service.NewCourseService(db)
-	courseHandler := course.NewCourseHandler(courseService)
+	getCourseLecturerRepository := getCourseLecturer.NewGetCourseRepository(db)
+	getCourseLecturerService := getCourseLecturer.NewGetCourseService(getCourseLecturerRepository)
+	getCourseLecturerHandler := getCourseLecturerHandler.NewGetCourseHandler(getCourseLecturerService)
+
+	getCoursePBMRepository := getCoursePBM.NewGetCourseRepository(db)
+	getCoursePBMService := getCoursePBM.NewGetCourseService(getCoursePBMRepository)
+	getCoursePBMHandler := getCoursePBMHandler.NewGetCourseHandler(getCoursePBMService)
 
 	groupStudent := r.Group("api/student/:studentid/course", middleware.Auth(), middleware.IsStudent())
 	groupStudent.GET("", getAllCourseHandler.GetAllCourseHandler)
 	groupStudent.GET(":id", getCourseHandler.GetCourseHandler)
 
 	groupLecturer := r.Group("api/lecturer/:lecturerid/course", middleware.Auth(), middleware.IsLecturer())
-	groupLecturer.GET("", courseHandler.GetCourseByLecturer)
+	groupLecturer.GET("", getCourseLecturerHandler.GetCourseHandler)
 
 	groupPBM := r.Group("api/pbm/course", middleware.Auth(), middleware.IsPBM())
-	groupPBM.GET("", courseHandler.GetCourseByPBM)
+	groupPBM.GET("", getCoursePBMHandler.GetCourseHandler)
 }
