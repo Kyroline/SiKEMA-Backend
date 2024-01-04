@@ -21,6 +21,8 @@ import (
 	util "attendance-is/utils"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -72,9 +74,13 @@ func main() {
 			return
 		}
 
-		c.SaveUploadedFile(file, "public/"+file.Filename)
+		name := strconv.FormatInt(time.Now().UnixMilli(), 10) + ".pdf"
 
-		c.String(http.StatusOK, file.Filename)
+		c.SaveUploadedFile(file, "public/"+name)
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": name,
+		})
 	})
 
 	if *isMigrate {
