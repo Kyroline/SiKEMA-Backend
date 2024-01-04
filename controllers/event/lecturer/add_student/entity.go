@@ -1,6 +1,6 @@
 package addStudentEvent
 
-type AddStudentToEventRequest struct {
-	EventId   uint
+type InputAddStudent struct {
+	EventId   string
 	StudentId []string `json:"student_id"`
 }
