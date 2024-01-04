@@ -8,7 +8,7 @@ import (
 )
 
 type Repository interface {
-	GetEventByID(ID string) (*model.Event, string)
+	GetEventByID(LecturerID string, ID string) (*model.Event, string)
 }
 
 type repository struct {
@@ -19,9 +19,9 @@ func NewShowEventRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) GetEventByID(ID string) (*model.Event, string) {
+func (r *repository) GetEventByID(LecturerID string, ID string) (*model.Event, string) {
 	var event model.Event
-	if err := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("id = ?", ID).Take(&event).Error; err != nil {
+	if err := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("lecturer_id = ? AND id = ?", LecturerID, ID).Take(&event).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, "EVENT_NOTFOUND_404"
 		}

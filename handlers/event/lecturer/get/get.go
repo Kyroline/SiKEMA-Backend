@@ -17,7 +17,8 @@ func NewGetEventHandler(service getEvent.Service) *handler {
 }
 
 func (h *handler) GetEventHandler(c *gin.Context) {
-	res, err := h.service.GetEventService()
+	input := getEvent.InputGetEvent{LecturerID: c.Param("lecturerid")}
+	res, err := h.service.GetEventService(input)
 	if err != "" {
 		switch err {
 		case "EVENT_NOTFOUND_404":

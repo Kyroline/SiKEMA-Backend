@@ -15,7 +15,7 @@ func NewShowEventService(repository Repository) *service {
 }
 
 func (s *service) ShowEventService(input InputShowEvent) (*model.Event, string) {
-	event, err := s.repository.GetEventByID(input.EventID)
+	event, err := s.repository.GetEventByID(input.LecturerID, input.EventID)
 	if err != "" {
 		return nil, err
 	}

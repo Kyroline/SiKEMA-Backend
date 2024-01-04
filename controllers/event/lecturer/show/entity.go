@@ -1,5 +1,6 @@
 package showEvent
 
 type InputShowEvent struct {
-	EventID string
+	EventID    string
+	LecturerID string
 }

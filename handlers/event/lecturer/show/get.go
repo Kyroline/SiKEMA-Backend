@@ -19,6 +19,7 @@ func NewShowEventHandler(service showEvent.Service) *handler {
 func (h *handler) ShowEventHandler(c *gin.Context) {
 	var input showEvent.InputShowEvent
 	input.EventID = c.Param("id")
+	input.LecturerID = c.Param("lecturerid")
 	res, err := h.service.ShowEventService(input)
 	if err != "" {
 		switch err {
