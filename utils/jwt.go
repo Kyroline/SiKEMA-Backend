@@ -17,7 +17,7 @@ type JWTClaim struct {
 }
 
 func GenerateToken(claim JWTClaim) (string, error) {
-	token_lifetime, _ := strconv.Atoi(GetEnv("TOKEN_LIFETIME"))
+	token_lifetime, _ := strconv.Atoi("3600")
 
 	claims := jwt.MapClaims{}
 	claims["uid"] = claim.Uid

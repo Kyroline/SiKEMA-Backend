@@ -1,18 +1,11 @@
 package util
 
-import (
-	"log"
-	"os"
+// func GetEnv(key string) string {
+// 	err := godotenv.Load(".env")
 
-	"github.com/joho/godotenv"
-)
+// 	if err != nil {
+// 		log.Fatalf("Error loading .env file")
+// 	}
 
-func GetEnv(key string) string {
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
-}
+// 	return os.Getenv(key)
+// }
