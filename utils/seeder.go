@@ -4,17 +4,18 @@ import (
 	model "attendance-is/models"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func Seed() {
 	pass, _ := bcrypt.GenerateFromPassword([]byte("secret"), bcrypt.DefaultCost)
 	users := []model.User{
-		{Password: string(pass)},
-		{Password: string(pass)},
-		{Password: string(pass)},
-		{Password: string(pass)},
-		{Password: string(pass)},
-		{Password: string(pass)},
+		{Email: "a@gmail.com", Password: string(pass), Type: 0},
+		{Email: "b@gmail.com", Password: string(pass), Type: 0},
+		{Email: "c@gmail.com", Password: string(pass), Type: 0},
+		{Email: "kurnianingsih@gmail.com", Password: string(pass), Type: 1},
+		{Email: "kuwatsantoso@gmail.com", Password: string(pass), Type: 1},
+		{Email: "rizky.w.dewantoro@gmail.com", Password: string(pass), Type: 2},
 	}
 	DB.Create(&users)
 
@@ -26,7 +27,7 @@ func Seed() {
 	DB.Save(&classes)
 
 	students := []model.Student{
-		{ID: 1, Nim: "43321001", Name: "ADI RIFTA DWI KURNIAWAN"},
+		{ID: 1, Nim: "43321001", Name: "ADI RIFTA DWI KURNIAWAN", UserID: users[0].ID},
 		{ID: 2, Nim: "43321002", Name: "ADRIAN REYHAN PRANATA"},
 		{ID: 3, Nim: "43321003", Name: "AHMAD ADI IRFANSYAH"},
 		{ID: 4, Nim: "43321004", Name: "ALFINA NAILAL MUNA"},
@@ -53,7 +54,7 @@ func Seed() {
 		{ID: 25, Nim: "43321025", Name: "SUFYAN HANIF ARIYANA"},
 		{ID: 26, Nim: "43321026", Name: "SYAUQI NUR MUHAMMAD"},
 
-		{ID: 1 + 26, Nim: "43321101", Name: "AFIF IHZA DARMAWAN"},
+		{ID: 1 + 26, Nim: "43321101", Name: "AFIF IHZA DARMAWAN", UserID: users[1].ID},
 		{ID: 1 + 27, Nim: "43321102", Name: "AHMAD SYAHRUL FAZA"},
 		{ID: 1 + 28, Nim: "43321103", Name: "AINNUR HANIF NUGRAHA"},
 		{ID: 1 + 29, Nim: "43321104", Name: "ARDHILLA EKA WINDIARTI"},
@@ -79,7 +80,7 @@ func Seed() {
 		{ID: 1 + 49, Nim: "43321124", Name: "SITI AINUN RODHIYAH"},
 		{ID: 1 + 50, Nim: "43321125", Name: "TEGAR RADITYA PERMANA PUTRA"},
 
-		{ID: 1 + 51, Nim: "43321201", Name: "AFIF RAMZY BADRANI"},
+		{ID: 1 + 51, Nim: "43321201", Name: "AFIF RAMZY BADRANI", UserID: users[2].ID},
 		{ID: 1 + 52, Nim: "43321202", Name: "AJI DWI PRAKOSO"},
 		{ID: 1 + 53, Nim: "43321203", Name: "ASHABUL KAHFI"},
 		{ID: 1 + 54, Nim: "43321204", Name: "BINA SATRIA FAUZI"},
@@ -111,8 +112,8 @@ func Seed() {
 	DB.Model(&classes[2]).Association("Students").Replace(students[51:75])
 
 	lecturer := []model.Lecturer{
-		{Nip: "197904262003122002", Name: "KURNIANINGSIH, S.T., M.T., Dr."},
-		{Nip: "198407192019031008", Name: "KUWAT SANTOSO, M. KOM"},
+		{Nip: "197904262003122002", Name: "KURNIANINGSIH, S.T., M.T., Dr.", UserID: users[3].ID},
+		{Nip: "198407192019031008", Name: "KUWAT SANTOSO, M. KOM", UserID: users[4].ID},
 		{Nip: "197403112000121001", Name: "MARDIYONO, S.Kom., M.Sc."},
 		{Nip: "199001072019031020", Name: "MUHAMMAD IRWAN YANWARI. S.Kom., M.Eng."},
 		{Nip: "199107302019031010", Name: "NURSENO BAYU AJI, S. Kom, M. Kom."},
@@ -149,4 +150,14 @@ func Seed() {
 	for _, element := range classes {
 		DB.Model(&element).Association("Courses").Replace(courses[0:7])
 	}
+
+	DB.Create([]model.Enrollment{
+		{ClassID: 1, CourseID: 1, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 1}}}},
+		{ClassID: 2, CourseID: 1, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 1}}}},
+		{ClassID: 3, CourseID: 1, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 1}}}},
+
+		{ClassID: 1, CourseID: 2, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 2}}}},
+		{ClassID: 2, CourseID: 2, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 2}}}},
+		{ClassID: 3, CourseID: 2, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 2}}}},
+	})
 }
