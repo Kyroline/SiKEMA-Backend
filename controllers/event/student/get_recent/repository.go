@@ -16,7 +16,7 @@ type repository struct {
 	db *gorm.DB
 }
 
-func NewShowEventRepository(db *gorm.DB) *repository {
+func NewGetRecentEventRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
@@ -33,7 +33,7 @@ func (r *repository) GetStudent(StudentID string) (*model.Student, string) {
 
 func (r *repository) GetRecentEvent(classId string) (*model.Event, string) {
 	var event model.Event
-	if err := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("class_id = ?", classId).Where("status IS NOT ?", 3).Order("created_at desc").First(&event).Error; err != nil {
+	if err := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("class_id = ?", classId).Where("status != ?", 2).Order("created_at desc").First(&event).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, "EVENT_NOTFOUND_404"
 		}

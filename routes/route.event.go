@@ -7,6 +7,9 @@ import (
 	getRecentEventLecturer "attendance-is/controllers/event/lecturer/get_recent"
 	getRecentEventLecturerHandler "attendance-is/handlers/event/lecturer/get_recent"
 
+	getRecentEventStudent "attendance-is/controllers/event/student/get_recent"
+	getRecentEventStudentHandler "attendance-is/handlers/event/student/get_recent"
+
 	showEvent "attendance-is/controllers/event/lecturer/show"
 	showEventHandler "attendance-is/handlers/event/lecturer/show"
 
@@ -18,6 +21,9 @@ import (
 
 	createEvent "attendance-is/controllers/event/lecturer/create"
 	createEventHandler "attendance-is/handlers/event/lecturer/create"
+
+	updateEvent "attendance-is/controllers/event/lecturer/update"
+	updateEventHandler "attendance-is/handlers/event/lecturer/update"
 
 	finalizeEvent "attendance-is/controllers/event/lecturer/finalize"
 	finalizeEventHandler "attendance-is/handlers/event/lecturer/finalize"
@@ -43,6 +49,10 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	getRecentEventLecturerService := getRecentEventLecturer.NewGetRecentEventService(getRecentEventLecturerRepo)
 	getRecentEventLecturerHandler := getRecentEventLecturerHandler.NewGetRecentEventHandler(getRecentEventLecturerService)
 
+	getRecentEventStudentRepo := getRecentEventStudent.NewGetRecentEventRepository(db)
+	getRecentEventStudentService := getRecentEventStudent.NewGetRecentEventService(getRecentEventStudentRepo)
+	getRecentEventStudentHandler := getRecentEventStudentHandler.NewGetRecentEventHandler(getRecentEventStudentService)
+
 	showEventRepo := showEvent.NewShowEventRepository(db)
 	showEventService := showEvent.NewShowEventService(showEventRepo)
 	showEventHandler := showEventHandler.NewShowEventHandler(showEventService)
@@ -58,6 +68,10 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	createEventRepo := createEvent.NewCreateEventRepository(db)
 	createEventService := createEvent.NewCreateEventService(createEventRepo)
 	createEventHandler := createEventHandler.NewCreateEventHandler(createEventService)
+
+	updateEventRepo := updateEvent.NewUpdateEventRepository(db)
+	updateEventService := updateEvent.NewUpdateEventService(updateEventRepo)
+	updateEventHandler := updateEventHandler.NewUpdateEventHandler(updateEventService)
 
 	finalizeEventRepo := finalizeEvent.NewFinalizeEventRepository(db)
 	finalizeEventService := finalizeEvent.NewFinalizeEventService(finalizeEventRepo)
@@ -78,12 +92,13 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	groupLecturer.POST(":id/qrcode", saveQRCodeHandler.SaveQRCodeHandler)
 	groupLecturer.GET("/recent", getRecentEventLecturerHandler.GetRecentEventHandler)
 	groupLecturer.GET(":id", showEventHandler.ShowEventHandler)
-	groupLecturer.PATCH(":id", finalizeEventHandler.FinalizeEventHandler)
+	groupLecturer.PATCH(":id", updateEventHandler.UpdateEventHandler)
+	groupLecturer.PATCH(":id/finalize", finalizeEventHandler.FinalizeEventHandler)
 	groupLecturer.POST("", createEventHandler.CreateEventHandler)
 	groupLecturer.POST(":id/student", addStudentEventHandler.AddStudentEventHandler)
 	groupLecturer.DELETE(":id/student", removeStudentEventHandler.RemoveStudentEvent)
 
-	// groupStudent := r.Group("/api/student/:studentid/event", middleware.Auth(), middleware.IsStudent())
+	groupStudent := r.Group("/api/student/:studentid/event", middleware.Auth(), middleware.IsStudent())
 	// groupStudent.GET("")
-	// groupStudent.GET(":id")
+	groupStudent.GET("/recent", getRecentEventStudentHandler.GetRecentEventHandler)
 }

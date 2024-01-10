@@ -12,7 +12,7 @@ type Excuse struct {
 	Absent     *Absent   `json:"absent,omitempty" gorm:"foreignKey:AbsentID"`
 	Excuse     string    `json:"excuse,omitempty" gorm:"type:varchar(255)"`
 	Attachment string    `json:"attachment,omitempty" gorm:"type:varchar(255)"`
-	Status     uint      `json:"status,omitempty"`
+	Status     uint      `json:"status"`
 	CreatedAt  time.Time `json:"created_at,omitempty"`
 	UpdatedAt  time.Time `json:"updated_at,omitempty"`
 }

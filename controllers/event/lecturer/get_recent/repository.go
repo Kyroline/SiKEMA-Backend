@@ -21,7 +21,7 @@ func NewGetRecentEventRepository(db *gorm.DB) *repository {
 
 func (r *repository) GetRecentEvent(LecturerID string) (*model.Event, string) {
 	var event model.Event
-	if err := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("lecturer_id = ?", LecturerID).Where("status IS NOT ?", 3).Order("created_at desc").First(&event).Error; err != nil {
+	if err := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("lecturer_id = ?", LecturerID).Where("status != ?", 2).Order("created_at desc").First(&event).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, "EVENT_NOTFOUND_404"
 		}

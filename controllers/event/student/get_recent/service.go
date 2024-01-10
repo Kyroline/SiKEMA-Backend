@@ -13,7 +13,7 @@ type service struct {
 	repository Repository
 }
 
-func NewShowEventService(repository Repository) *service {
+func NewGetRecentEventService(repository Repository) *service {
 	return &service{repository: repository}
 }
 
