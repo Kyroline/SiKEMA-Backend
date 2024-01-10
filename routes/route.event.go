@@ -4,6 +4,9 @@ import (
 	getEvent "attendance-is/controllers/event/lecturer/get"
 	getEventHandler "attendance-is/handlers/event/lecturer/get"
 
+	getRecentEventLecturer "attendance-is/controllers/event/lecturer/get_recent"
+	getRecentEventLecturerHandler "attendance-is/handlers/event/lecturer/get_recent"
+
 	showEvent "attendance-is/controllers/event/lecturer/show"
 	showEventHandler "attendance-is/handlers/event/lecturer/show"
 
@@ -19,6 +22,12 @@ import (
 	finalizeEvent "attendance-is/controllers/event/lecturer/finalize"
 	finalizeEventHandler "attendance-is/handlers/event/lecturer/finalize"
 
+	getRecentQRCode "attendance-is/controllers/qrcode/lecturer/get_recent"
+	getRecentQRCodeHandler "attendance-is/handlers/qrcode/lecturer/get_recent"
+
+	saveQRCode "attendance-is/controllers/qrcode/lecturer/save"
+	saveQRCodeHandler "attendance-is/handlers/qrcode/lecturer/save"
+
 	middleware "attendance-is/middlewares"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +38,10 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	getEventRepo := getEvent.NewGetEventRepository(db)
 	getEventService := getEvent.NewGetEventService(getEventRepo)
 	getEventHandler := getEventHandler.NewGetEventHandler(getEventService)
+
+	getRecentEventLecturerRepo := getRecentEventLecturer.NewGetRecentEventRepository(db)
+	getRecentEventLecturerService := getRecentEventLecturer.NewGetRecentEventService(getRecentEventLecturerRepo)
+	getRecentEventLecturerHandler := getRecentEventLecturerHandler.NewGetRecentEventHandler(getRecentEventLecturerService)
 
 	showEventRepo := showEvent.NewShowEventRepository(db)
 	showEventService := showEvent.NewShowEventService(showEventRepo)
@@ -50,9 +63,20 @@ func InitEventRoute(db *gorm.DB, r *gin.Engine) {
 	finalizeEventService := finalizeEvent.NewFinalizeEventService(finalizeEventRepo)
 	finalizeEventHandler := finalizeEventHandler.NewFinalizeEventHandler(finalizeEventService)
 
+	getRecentQRCodeRepo := getRecentQRCode.NewGetRecentQRCodeRepository(db)
+	getRecentQRCodeService := getRecentQRCode.NewGetRecentQRCodeService(getRecentQRCodeRepo)
+	getRecentQRCodeHandler := getRecentQRCodeHandler.NewGetRecentQRCodeHandler(getRecentQRCodeService)
+
+	saveQRCodeRepo := saveQRCode.NewSaveQRCodeRepository(db)
+	saveQRCodeService := saveQRCode.NewSaveQRCodeService(saveQRCodeRepo)
+	saveQRCodeHandler := saveQRCodeHandler.NewSaveQRCodeHandler(saveQRCodeService)
+
 	groupLecturer := r.Group("/api/lecturer/:lecturerid/event", middleware.Auth(), middleware.IsLecturer())
 
 	groupLecturer.GET("", getEventHandler.GetEventHandler)
+	groupLecturer.GET(":id/qrcode", getRecentQRCodeHandler.GetRecentQRCodeHandler)
+	groupLecturer.POST(":id/qrcode", saveQRCodeHandler.SaveQRCodeHandler)
+	groupLecturer.GET("/recent", getRecentEventLecturerHandler.GetRecentEventHandler)
 	groupLecturer.GET(":id", showEventHandler.ShowEventHandler)
 	groupLecturer.PATCH(":id", finalizeEventHandler.FinalizeEventHandler)
 	groupLecturer.POST("", createEventHandler.CreateEventHandler)

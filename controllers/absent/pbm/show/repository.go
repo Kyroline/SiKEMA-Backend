@@ -20,7 +20,7 @@ func NewShowAbsentRepository(db *gorm.DB) *repository {
 
 func (r *repository) GetAbsentByID(id string) (*model.Absent, string) {
 	var absent model.Absent
-	if err := r.db.Where("id = ?", id).Take(&absent).Error; err != nil {
+	if err := r.db.Model(absent).Preload("Student").Preload("Event").Preload("Event.Course").Preload("Event.Class").Preload("Event.Lecturer").Where("id = ?", id).Take(&absent).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, "ABSENT_NOTFOUND_404"
 		} else {

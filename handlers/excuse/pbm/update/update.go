@@ -18,8 +18,9 @@ func NewUpdateExcuseHandler(service updateExcuse.Service) *handler {
 func (h *handler) UpdateExcuseHandler(c *gin.Context) {
 	var input updateExcuse.InputUpdateExcuse
 	c.ShouldBindJSON(&input)
+	input.ID = c.Param("id")
 
-	_, err := h.service.UpdateExcuseService(&input)
+	_, err := h.service.UpdateExcuseService(input)
 
 	switch err {
 	case "UPDATE_EXCUSE_NOTFOUND_404":

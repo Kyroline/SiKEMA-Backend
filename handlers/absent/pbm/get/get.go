@@ -2,7 +2,6 @@ package getAbsentHandler
 
 import (
 	getAbsent "attendance-is/controllers/absent/pbm/get"
-	model "attendance-is/models"
 	util "attendance-is/utils"
 	"net/http"
 
@@ -29,9 +28,5 @@ func (h *handler) GetAbsentHandler(c *gin.Context) {
 			return
 		}
 	}
-	var result []model.AbsentJSON
-	for _, a := range *res {
-		result = append(result, *a.ParseJSON())
-	}
-	util.APIResponse(c, http.StatusOK, result, nil)
+	util.APIResponse(c, http.StatusOK, res, nil)
 }

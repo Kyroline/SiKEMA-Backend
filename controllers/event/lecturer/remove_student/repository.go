@@ -23,6 +23,9 @@ func NewRemoveStudentEventRepository(db *gorm.DB) *repository {
 func (r *repository) GetStudentByWhere(query interface{}, args ...interface{}) (*[]model.Student, string) {
 	var student []model.Student
 	err := r.db.Where(query, args...).Find(&student)
+	if err.Error != nil {
+		return nil, "STUDENT_UNEXPECTED_500 : " + err.Error.Error()
+	}
 	if err.RowsAffected == 0 {
 		return nil, "STUDENT_NOTFOUND_404"
 	}

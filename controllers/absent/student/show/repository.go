@@ -31,7 +31,7 @@ func (r *repository) GetStudentByID(ID string) (*model.Student, string) {
 
 func (r *repository) GetAbsentByWhere(query interface{}, args ...interface{}) (*model.Absent, string) {
 	var absent model.Absent
-	if err := r.db.Where(query, args...).Take(&absent).Error; err != nil {
+	if err := r.db.Model(absent).Preload("Event").Preload("Event.Course").Preload("Event.Lecturer").Where(query, args...).Take(&absent).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, "ABSENT_NOTFOUND_404"
 		}

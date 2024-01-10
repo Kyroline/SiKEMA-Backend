@@ -16,28 +16,6 @@ type Absent struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
-type AbsentJSON struct {
-	ID        uint      `json:"id"`
-	StudentID uint      `json:"student_id"`
-	Student   *Student  `json:"student,omitempty"`
-	EventID   uint      `json:"event_id"`
-	Event     *Event    `json:"event,omitempty"`
-	Hours     uint      `json:"hours,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-}
-
-func (entity *Absent) ParseJSON() *AbsentJSON {
-	return &AbsentJSON{
-		ID:        entity.ID,
-		StudentID: entity.StudentID,
-		Student:   &entity.Student,
-		EventID:   entity.EventID,
-		Event:     &entity.Event,
-		Hours:     entity.Hours,
-		CreatedAt: entity.CreatedAt,
-	}
-}
-
 func (entity *Absent) BeforeCreate(db *gorm.DB) error {
 	entity.CreatedAt = time.Now().Local()
 	return nil

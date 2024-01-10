@@ -17,7 +17,7 @@ func NewGetEventHandler(service getEvent.Service) *handler {
 }
 
 func (h *handler) GetEventHandler(c *gin.Context) {
-	input := getEvent.InputGetEvent{LecturerID: c.Param("lecturerid")}
+	input := getEvent.InputGetEvent{LecturerID: c.Param("lecturerid"), ClassID: c.Query("class_id"), CourseID: c.Query("course_id")}
 	res, err := h.service.GetEventService(input)
 	if err != "" {
 		switch err {

@@ -20,7 +20,7 @@ func NewGetAbsentRepository(db *gorm.DB) *repository {
 
 func (r *repository) GetAbsent() (*[]model.Absent, string) {
 	var absent []model.Absent
-	if err := r.db.Find(&absent).Error; err != nil {
+	if err := r.db.Model(model.Absent{}).Preload("Student").Preload("Event").Preload("Event.Course").Preload("Event.Class").Preload("Event.Lecturer").Find(&absent).Error; err != nil {
 		return nil, "ABSENT_UNEXPECTED_500 : " + err.Error()
 	}
 

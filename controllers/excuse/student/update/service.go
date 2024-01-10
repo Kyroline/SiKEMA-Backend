@@ -15,13 +15,23 @@ func NewUpdateExcuseService(repository Repository) *service {
 }
 
 func (s *service) UpdateExcuseService(input *InputUpdateExcuse) (*model.Excuse, string) {
-	excuse := model.Excuse{
-		ID:         input.ID,
-		Excuse:     input.Excuse,
-		Attachment: input.Attachment,
+	excuse, err := s.repository.GetExcuseByID(input.ID)
+	if err != "" {
+		return nil, err
 	}
 
-	res, err := s.repository.UpdateExcuseRepository(&excuse)
+	if input.Attachment != "" {
+		excuse.Attachment = input.Attachment
+	}
 
-	return res, err
+	if input.Excuse != "" {
+		excuse.Excuse = input.Excuse
+	}
+
+	err = s.repository.SaveExcuse(excuse)
+	if err != "" {
+		return nil, err
+	}
+
+	return excuse, ""
 }

@@ -16,7 +16,7 @@ type Event struct {
 	Lecturer     Lecturer       `json:"lecturer,omitempty" gorm:"foreignKey:LecturerID"`
 	Meet         uint           `json:"meet,omitempty"`
 	Students     []Student      `json:"students,omitempty" gorm:"many2many:attendances"`
-	Status       uint           `json:"status,omitempty"`
+	Status       uint           `json:"status"`
 	StudentCount uint           `json:"student_count,omitempty" gorm:"-"`
 	CreatedAt    time.Time      `json:"created_at,omitempty"`
 	UpdatedAt    time.Time      `json:"-"`

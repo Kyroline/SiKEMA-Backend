@@ -25,6 +25,9 @@ func (h *handler) RemoveStudentEvent(c *gin.Context) {
 	err := h.service.RemoveStudentToEventService(input)
 	if err != "" {
 		switch err {
+		case "STUDENT_NOTFOUND_404":
+			util.ErrorRespose(c, http.StatusNotFound, "Student NIM not found")
+			return
 		case "EVENT_NOTFOUND_404":
 			util.ErrorRespose(c, http.StatusNotFound, "Event ID not found")
 			return

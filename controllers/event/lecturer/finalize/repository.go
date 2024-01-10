@@ -10,6 +10,7 @@ type Repository interface {
 	GetStudentByWhere(query interface{}, args ...interface{}) (*[]model.Student, string)
 	GetEventByID(ID string) (*model.Event, string)
 	CreateAbsent(absent model.Absent) (*model.Absent, string)
+	UpdateEvent(event *model.Event) string
 }
 
 type repository struct {
@@ -22,9 +23,9 @@ func NewFinalizeEventRepository(db *gorm.DB) *repository {
 
 func (r *repository) GetStudentByWhere(query interface{}, args ...interface{}) (*[]model.Student, string) {
 	var student []model.Student
-	err := r.db.Where(query, args...).Find(&student)
-	if err.RowsAffected == 0 {
-		return nil, "STUDENT_NOTFOUND_404"
+	err := r.db.Where(query, args...).Find(&student).Error
+	if err != nil {
+		return nil, "STUDENT_UNEXPECTED_500 : " + err.Error()
 	}
 	return &student, ""
 }
@@ -49,4 +50,15 @@ func (r *repository) CreateAbsent(absent model.Absent) (*model.Absent, string) {
 	}
 
 	return &absent, ""
+}
+
+func (r *repository) UpdateEvent(event *model.Event) string {
+	if err := r.db.Save(event).Error; err != nil {
+		if err == gorm.ErrDuplicatedKey {
+			return "ABSENT_CONFLICT_409"
+		}
+		return "ABSENT_UNEXPECTED_500 : " + err.Error()
+	}
+
+	return ""
 }

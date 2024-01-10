@@ -1,7 +1,7 @@
 package updateExcuse
 
 type InputUpdateExcuse struct {
-	ID         uint
+	ID         string
 	Excuse     string `json:"excuse"`
 	Attachment string `json:"attachment"`
 }

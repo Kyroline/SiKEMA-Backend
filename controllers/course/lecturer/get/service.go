@@ -22,7 +22,7 @@ func (s *service) GetCourseService(input InputGetCourse) (*[]model.Enrollment, s
 		return nil, err
 	}
 
-	enrollments, err := s.repository.GetEnrollmentByLecturer(lecturer)
+	enrollments, err := s.repository.GetEnrollmentByLecturer(lecturer, input.ClassID, input.CourseID)
 	if err != "" {
 		return nil, err
 	}

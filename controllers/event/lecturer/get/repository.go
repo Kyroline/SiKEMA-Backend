@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	GetEvent(lecturerId string) (*[]model.Event, string)
+	GetEvent(lecturerId string, classId string, courseId string) (*[]model.Event, string)
 }
 
 type repository struct {
@@ -18,9 +18,19 @@ func NewGetEventRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) GetEvent(lecturerId string) (*[]model.Event, string) {
+func (r *repository) GetEvent(lecturerId string, classId string, courseId string) (*[]model.Event, string) {
 	var event []model.Event
-	if err := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("lecturer_id = ?", lecturerId).Find(&event).Error; err != nil {
+	db := r.db.Model(&event).Preload("Class").Preload("Course").Preload("Students").Preload("Lecturer").Where("lecturer_id = ?", lecturerId)
+
+	if classId != "" {
+		db = db.Where("class_id = ?", classId)
+	}
+
+	if courseId != "" {
+		db = db.Where("course_id = ?", courseId)
+	}
+
+	if err := db.Find(&event).Error; err != nil {
 		return nil, "EVENT_UNEXPECTED_500 : " + err.Error()
 	}
 

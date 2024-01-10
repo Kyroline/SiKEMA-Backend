@@ -29,7 +29,7 @@ func (s *service) GetCompensation() (*[]model.Student, string) {
 				continue
 			}
 
-			if excuse.Status != 3 {
+			if excuse.Status != 2 {
 				hours += int(absent.Hours)
 			}
 		}

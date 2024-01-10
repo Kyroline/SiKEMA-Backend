@@ -7,9 +7,11 @@ import (
 	middleware "attendance-is/middlewares"
 
 	getAbsent "attendance-is/controllers/absent/student/get"
+	getAbsentExcuse "attendance-is/controllers/absent/student/get_excuse"
 	showAbsent "attendance-is/controllers/absent/student/show"
 
 	getAbsentHandler "attendance-is/handlers/absent/student/get"
+	getAbsentExcuseHandler "attendance-is/handlers/absent/student/get_excuse"
 	showAbsentHandler "attendance-is/handlers/absent/student/show"
 
 	getAbsentPBM "attendance-is/controllers/absent/pbm/get"
@@ -30,6 +32,10 @@ func InitAbsentRoute(db *gorm.DB, r *gin.Engine) {
 	showAbsentService := showAbsent.NewShowAbsentService(showAbsentRepo)
 	showAbsentHandler := showAbsentHandler.NewShowAbsentHandler(showAbsentService)
 
+	getAbsentExcuseRepo := getAbsentExcuse.NewGetAbsentExcuseRepository(db)
+	getAbsentExcuseService := getAbsentExcuse.NewGetAbsentExcuseService(getAbsentExcuseRepo)
+	getAbsentExcuseHandler := getAbsentExcuseHandler.NewGetAbsentExcuseHandler(getAbsentExcuseService)
+
 	getAbsentPBMRepo := getAbsentPBM.NewGetAbsentRepository(db)
 	getAbsentPBMService := getAbsentPBM.NewGetAbsentService(getAbsentPBMRepo)
 	getAbsentPBMHandler := getAbsentHandlerPBM.NewGetAbsentHandler(getAbsentPBMService)
@@ -49,5 +55,6 @@ func InitAbsentRoute(db *gorm.DB, r *gin.Engine) {
 
 	studentGroup := r.Group("/api/student/:studentid", middleware.Auth(), middleware.IsStudent())
 	studentGroup.GET("absent", getAbsentHandler.GetAbsentHandler)
+	studentGroup.GET("absent/:id/excuse", getAbsentExcuseHandler.GetAbsentExcuseHandler)
 	studentGroup.GET("event/:eventid/absent", showAbsentHandler.ShowAbsentHandler)
 }

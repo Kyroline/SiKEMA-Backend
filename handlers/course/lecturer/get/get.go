@@ -18,6 +18,8 @@ func NewGetCourseHandler(service getCourse.Service) *handler {
 func (h *handler) GetCourseHandler(c *gin.Context) {
 	var input getCourse.InputGetCourse
 	input.LecturerID = c.Param("lecturerid")
+	input.ClassID = c.Query("class_id")
+	input.CourseID = c.Query("course_id")
 
 	res, err := h.service.GetCourseService(input)
 

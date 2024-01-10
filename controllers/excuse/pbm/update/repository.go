@@ -7,7 +7,8 @@ import (
 )
 
 type Repository interface {
-	UpdateExcuseRepository(input *model.Excuse) (*model.Excuse, string)
+	GetExcuseByID(id string) (*model.Excuse, string)
+	SaveExcuse(excuse *model.Excuse) string
 }
 
 type repository struct {
@@ -18,6 +19,18 @@ func NewUpdateExcuseRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) UpdateExcuseRepository(input *model.Excuse) (*model.Excuse, string) {
-	return nil, ""
+func (r *repository) GetExcuseByID(id string) (*model.Excuse, string) {
+	var excuse model.Excuse
+	if err := r.db.Where("id = ?", id).Take(&excuse).Error; err != nil {
+		return nil, "EXCUSE_NOTFOUND_404"
+	}
+	return &excuse, ""
+}
+
+func (r *repository) SaveExcuse(excuse *model.Excuse) string {
+
+	if err := r.db.Save(&excuse).Error; err != nil {
+		return "EXCUSE_UNEXPECTED_500 : " + err.Error()
+	}
+	return ""
 }

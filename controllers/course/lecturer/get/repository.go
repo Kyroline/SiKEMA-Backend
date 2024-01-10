@@ -8,7 +8,7 @@ import (
 
 type Repository interface {
 	GetLecturerByID(id string) (*model.Lecturer, string)
-	GetEnrollmentByLecturer(lecturer *model.Lecturer) (*[]model.Enrollment, string)
+	GetEnrollmentByLecturer(lecturer *model.Lecturer, classId string, courseId string) (*[]model.Enrollment, string)
 }
 
 type repository struct {
@@ -21,6 +21,7 @@ func NewGetCourseRepository(db *gorm.DB) *repository {
 
 func (r *repository) GetLecturerByID(id string) (*model.Lecturer, string) {
 	var lecturer model.Lecturer
+
 	if err := r.db.Where("id = ?", id).Take(&lecturer).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, "LECTURER_NOTFOUND_404"
@@ -31,9 +32,19 @@ func (r *repository) GetLecturerByID(id string) (*model.Lecturer, string) {
 	return &lecturer, ""
 }
 
-func (r *repository) GetEnrollmentByLecturer(lecturer *model.Lecturer) (*[]model.Enrollment, string) {
+func (r *repository) GetEnrollmentByLecturer(lecturer *model.Lecturer, classId string, courseId string) (*[]model.Enrollment, string) {
 	var enrollments []model.Enrollment
-	if err := r.db.Model(&lecturer).Preload("Class").Preload("Course").Association("Enrollments").Find(&enrollments); err != nil {
+
+	db := r.db.Model(&lecturer).Preload("Class").Preload("Course")
+	if classId != "" {
+		db = db.Where("class_id = ?", classId)
+	}
+
+	if courseId != "" {
+		db = db.Where("course_id = ?", courseId)
+	}
+
+	if err := db.Association("Enrollments").Find(&enrollments); err != nil {
 		return nil, "COURSE_UNEXPECTED_500 : " + err.Error()
 	}
 

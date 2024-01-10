@@ -40,5 +40,13 @@ func (s *service) FinalizeEventService(input InputFinalizeEvent) string {
 			return err
 		}
 	}
+
+	event.Status = 2
+
+	err = s.repository.UpdateEvent(event)
+	if err != "" {
+		return err
+	}
+
 	return ""
 }

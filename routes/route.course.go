@@ -8,6 +8,9 @@ import (
 	getCourseHandler "attendance-is/handlers/course/student/get"
 	getAllCourseHandler "attendance-is/handlers/course/student/getAll"
 
+	getCourseAttendanceStudent "attendance-is/controllers/course/student/get_attendance"
+	getCourseAttendanceHandler "attendance-is/handlers/course/student/get_attendance"
+
 	getCourseLecturer "attendance-is/controllers/course/lecturer/get"
 	getCourseLecturerHandler "attendance-is/handlers/course/lecturer/get"
 
@@ -24,6 +27,10 @@ func InitCourseRoute(db *gorm.DB, r *gin.Engine) {
 	getCourseService := getCourseStudent.NewGetCourseService(getCourseRepository)
 	getCourseHandler := getCourseHandler.NewGetCourseHandler(getCourseService)
 
+	getCourseAttendanceRepository := getCourseAttendanceStudent.NewGetCourseAttendanceRepository(db)
+	getCourseAttendanceService := getCourseAttendanceStudent.NewGetCourseAttendanceService(getCourseAttendanceRepository)
+	getCourseAttendanceHandler := getCourseAttendanceHandler.NewGetCourseAttendanceHandler(getCourseAttendanceService)
+
 	getAllCourseRepository := getAllCourseStudent.NewGetAllCourseRepository(db)
 	getAllCourseService := getAllCourseStudent.NewGetAllCourseService(getAllCourseRepository)
 	getAllCourseHandler := getAllCourseHandler.NewGetAllCourseHandler(getAllCourseService)
@@ -38,6 +45,7 @@ func InitCourseRoute(db *gorm.DB, r *gin.Engine) {
 
 	groupStudent := r.Group("api/student/:studentid/course", middleware.Auth(), middleware.IsStudent())
 	groupStudent.GET("", getAllCourseHandler.GetAllCourseHandler)
+	groupStudent.GET(":id/attendance", getCourseAttendanceHandler.GetCourseAttendanceHandler)
 	groupStudent.GET(":id", getCourseHandler.GetCourseHandler)
 
 	groupLecturer := r.Group("api/lecturer/:lecturerid/course", middleware.Auth(), middleware.IsLecturer())
