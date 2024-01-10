@@ -26,7 +26,7 @@ func GenerateToken(claim JWTClaim) (string, error) {
 	claims["exp"] = time.Now().Add(time.Second * time.Duration(token_lifetime)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(GetEnv("JWT_KEY")))
+	return token.SignedString([]byte("cfiomaciojcihomwciohb3dcwriou3r"))
 }
 
 func ParseToken(tokenString string) (*jwt.Token, error) {
@@ -35,7 +35,7 @@ func ParseToken(tokenString string) (*jwt.Token, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(GetEnv("JWT_KEY")), nil
+		return []byte("cfiomaciojcihomwciohb3dcwriou3r"), nil
 	})
 }
 
