@@ -7,11 +7,11 @@ import (
 )
 
 type Excuse struct {
-	ID         uint      `json:"id,omitempty" gorm:"primaryKey"`
-	AbsentID   uint      `json:"absent_id,omitempty"`
+	ID         uint      `json:"id" gorm:"primaryKey"`
+	AbsentID   uint      `json:"absent_id"`
 	Absent     *Absent   `json:"absent,omitempty" gorm:"foreignKey:AbsentID"`
-	Excuse     string    `json:"excuse,omitempty" gorm:"type:varchar(255)"`
-	Attachment string    `json:"attachment,omitempty" gorm:"type:varchar(255)"`
+	Excuse     string    `json:"excuse" gorm:"type:varchar(255)"`
+	Attachment string    `json:"attachment" gorm:"type:varchar(255)"`
 	Status     uint      `json:"status"`
 	CreatedAt  time.Time `json:"created_at,omitempty"`
 	UpdatedAt  time.Time `json:"updated_at,omitempty"`
