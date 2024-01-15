@@ -4,7 +4,6 @@ import (
 	model "attendance-is/models"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 func Seed() {
@@ -147,17 +146,20 @@ func Seed() {
 
 	DB.Save(&courses)
 
-	for _, element := range classes {
-		DB.Model(&element).Association("Courses").Replace(courses[0:7])
+	enrollments := []model.Enrollment{
+		{ClassID: 1, CourseID: 1, Lecturers: &[]model.Lecturer{{ID: 1}}},
+		{ClassID: 2, CourseID: 1, Lecturers: &[]model.Lecturer{{ID: 1}}},
+		{ClassID: 3, CourseID: 1, Lecturers: &[]model.Lecturer{{ID: 1}}},
+		{ClassID: 1, CourseID: 2, Lecturers: &[]model.Lecturer{{ID: 2}}},
+		{ClassID: 2, CourseID: 2, Lecturers: &[]model.Lecturer{{ID: 2}}},
+		{ClassID: 3, CourseID: 2, Lecturers: &[]model.Lecturer{{ID: 2}}},
+		{ClassID: 1, CourseID: 3, Lecturers: &[]model.Lecturer{{ID: 3}}},
+		{ClassID: 2, CourseID: 3, Lecturers: &[]model.Lecturer{{ID: 3}}},
+		{ClassID: 3, CourseID: 3, Lecturers: &[]model.Lecturer{{ID: 3}}},
+		{ClassID: 1, CourseID: 4, Lecturers: &[]model.Lecturer{{ID: 4}}},
+		{ClassID: 2, CourseID: 4, Lecturers: &[]model.Lecturer{{ID: 4}}},
+		{ClassID: 3, CourseID: 4, Lecturers: &[]model.Lecturer{{ID: 4}}},
 	}
 
-	DB.Create([]model.Enrollment{
-		{ClassID: 1, CourseID: 1, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 1}}}},
-		{ClassID: 2, CourseID: 1, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 1}}}},
-		{ClassID: 3, CourseID: 1, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 1}}}},
-
-		{ClassID: 1, CourseID: 2, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 2}}}},
-		{ClassID: 2, CourseID: 2, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 2}}}},
-		{ClassID: 3, CourseID: 2, Lecturers: &[]model.Lecturer{{Model: gorm.Model{ID: 2}}}},
-	})
+	DB.Create(&enrollments)
 }
