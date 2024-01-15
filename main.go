@@ -24,11 +24,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-
 	"flag"
 	"fmt"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func main() {
@@ -62,7 +64,11 @@ func main() {
 	}
 
 	util.Connection(dbUser, dbPass, dbHost, dbPort, dbName)
-	r := RouterSetup()
+
+	logger := LoggerInit()
+	defer logger.Sync()
+
+	r := RouterSetup(logger)
 	r.StaticFS("/files", http.Dir("public"))
 
 	r.POST("/upload", func(c *gin.Context) {
@@ -92,10 +98,11 @@ func main() {
 	}
 	fmt.Println(*host + ":" + *port)
 
+	logger.Info("Application started")
 	r.Run(*host + ":" + *port)
 }
 
-func RouterSetup() *gin.Engine {
+func RouterSetup(logger *zap.Logger) *gin.Engine {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -104,6 +111,19 @@ func RouterSetup() *gin.Engine {
 		AllowHeaders:  []string{"*"},
 		AllowWildcard: true,
 	}))
+
+	router.Use(func(c *gin.Context) {
+		start := time.Now()
+
+		c.Next()
+
+		duration := time.Since(start)
+		logger.Info("Request processed",
+			zap.String("method", c.Request.Method),
+			zap.String("path", c.Request.URL.Path),
+			zap.Duration("duration", duration),
+		)
+	})
 
 	route.InitAbsentRoute(util.DB, router)
 	route.InitClassRoute(util.DB, router)
@@ -116,4 +136,17 @@ func RouterSetup() *gin.Engine {
 	route.InitSPRoute(util.DB, router)
 
 	return router
+}
+
+func LoggerInit() *zap.Logger {
+	cfg := zap.NewProductionConfig()
+	cfg.OutputPaths = []string{"logfile.log"} // Set the desired log file path
+	cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	logger, err := cfg.Build()
+	if err != nil {
+		panic("Failed to initialize logger: " + err.Error())
+	}
+	defer logger.Sync()
+
+	return logger
 }
