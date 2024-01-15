@@ -46,6 +46,6 @@ func (r *repository) GetEnrollmentByID(student *model.Student, id string) (*mode
 
 func (r *repository) GetCourseEvent(course *model.Course, student *model.Student) (*[]model.Event, string) {
 	var events []model.Event
-	r.db.Model(events).Preload("Students", "id = ?", student.ID).Where("course_id = ?", course.ID).Find(&events)
+	r.db.Model(events).Preload("Students", "id = ?", student.ID).Where("course_id = ? AND class_id = ?", course.ID, student.ClassID).Find(&events)
 	return &events, ""
 }
