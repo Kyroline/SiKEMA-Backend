@@ -24,11 +24,11 @@ func (r *repository) GetExcuseRepository(input InputGetExcuse) (*model.Excuse, s
 
 	var count int64
 	if err := db.Where("id = ?", input.ID).Count(&count).Find(&excuse).Error; err != nil {
-		return nil, "GET_EXCUSE_INTERNAL_500"
+		return nil, "EXCUSE_UNEXPECTED_500 : " + err.Error()
 	}
 
 	if count == 0 {
-		return nil, "GET_EXCUSE_NOTFOUND_404"
+		return nil, "EXCUSE_NOTFOUND_404"
 	}
 
 	return &excuse, ""

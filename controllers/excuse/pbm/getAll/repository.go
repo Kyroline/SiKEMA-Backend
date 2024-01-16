@@ -23,7 +23,11 @@ func (r *repository) GetAllExcuseRepository() (*[]model.Excuse, string) {
 	db := r.db.Model(excuse)
 
 	if err := db.Find(&excuse).Error; err != nil {
-		return nil, "GETALL_EXCUSE_INTERNAL_500"
+		return nil, "EXCUSE_UNEXPECTED_500 : " + err.Error()
+	}
+
+	if len(excuse) <= 0 {
+		return nil, "EXCUSE_NOTFOUND_404"
 	}
 
 	return &excuse, ""

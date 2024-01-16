@@ -2,6 +2,7 @@ package updateExcuseHandler
 
 import (
 	updateExcuse "attendance-is/controllers/excuse/pbm/update"
+	util "attendance-is/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,13 +23,15 @@ func (h *handler) UpdateExcuseHandler(c *gin.Context) {
 
 	_, err := h.service.UpdateExcuseService(input)
 
-	switch err {
-	case "UPDATE_EXCUSE_NOTFOUND_404":
-		return
-	case "UPDATE_EXCUSE_INTERNAL_500":
-		return
-	default:
-		c.Status(http.StatusAccepted)
-		return
+	if err != "" {
+		switch err {
+		case "EXCUSE_NOTFOUND_404":
+			util.ErrorResponse(c, http.StatusNotFound, "Record not found")
+			return
+		default:
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
+			return
+		}
 	}
+	util.APIResponse(c, http.StatusNoContent, nil, nil)
 }

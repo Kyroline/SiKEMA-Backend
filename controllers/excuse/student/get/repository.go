@@ -8,7 +8,6 @@ import (
 
 type Repository interface {
 	GetExcuseRepository(input InputGetExcuse) (*model.Excuse, string)
-	GetExcusesRepository(input InputGetExcuse) (*model.Excuse, string)
 }
 
 type repository struct {
@@ -21,14 +20,11 @@ func NewGetExcuseRepository(db *gorm.DB) *repository {
 
 func (r *repository) GetExcuseRepository(input InputGetExcuse) (*model.Excuse, string) {
 	var excuse model.Excuse
-	db := r.db.Model(excuse)
-	db.Preload("Absent", "student_id = ?", input.StudentID).Where("id = ?", input.ID).Find(&excuse)
-	return &excuse, ""
-}
-
-func (r *repository) GetExcusesRepository(input InputGetExcuse) (*model.Excuse, string) {
-	var excuse model.Excuse
-	db := r.db.Model(excuse)
-	db.Preload("Absent", "student_id = ?", input.StudentID).Where("id = ?", input.ID).Find(&excuse)
+	if err := r.db.Model(excuse).Preload("Absent", "student_id = ?", input.StudentID).Where("id = ?", input.ID).Take(&excuse).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, "EXCUSE_NOTFOUND_404"
+		}
+		return nil, "EXCUSE_UNEXPECTED_500"
+	}
 	return &excuse, ""
 }

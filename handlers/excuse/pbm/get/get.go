@@ -2,6 +2,7 @@ package getExcuseHandler
 
 import (
 	getExcuse "attendance-is/controllers/excuse/pbm/get"
+	util "attendance-is/utils"
 	"net/http"
 	"strconv"
 
@@ -22,10 +23,15 @@ func (h *handler) GetExcuseHandler(c *gin.Context) {
 	input.ID = uint(ID)
 
 	res, err := h.service.GetExcuseService(input)
-	switch err {
-	default:
-		c.JSON(http.StatusOK, gin.H{
-			"data": res,
-		})
+	if err != "" {
+		switch err {
+		case "EXCUSE_NOTFOUND_404":
+			util.ErrorResponse(c, http.StatusNotFound, "Record not found")
+			return
+		default:
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
+			return
+		}
 	}
+	util.APIResponse(c, http.StatusOK, res, nil)
 }

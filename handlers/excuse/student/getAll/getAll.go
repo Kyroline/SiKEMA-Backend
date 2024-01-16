@@ -2,6 +2,7 @@ package getExcuseHandler
 
 import (
 	getAllExcuse "attendance-is/controllers/excuse/student/getAll"
+	util "attendance-is/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,16 +19,19 @@ func NewGetAllExcuseHandler(service getAllExcuse.Service) *handler {
 func (h *handler) GetAllExcuseHandler(c *gin.Context) {
 	var input getAllExcuse.InputGetAllExcuse
 	input.StudentID = c.Param("studentid")
+
 	res, err := h.service.GetAllExcuseService(input)
-
-	switch err {
-	case "ERR":
-
-	default:
-		c.JSON(http.StatusOK, gin.H{
-			"data": res,
-		})
+	if err != "" {
+		switch err {
+		case "EXCUSE_NOTFOUND_404":
+			util.ErrorResponse(c, http.StatusNotFound, "Record not found")
+			return
+		default:
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
+			return
+		}
 	}
+	util.APIResponse(c, http.StatusOK, res, nil)
 }
 
 // }

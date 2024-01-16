@@ -2,6 +2,7 @@ package createExcuseHandler
 
 import (
 	createExcuse "attendance-is/controllers/excuse/student/create"
+	util "attendance-is/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,22 +21,19 @@ func (h *handler) CreateExcuseHandler(c *gin.Context) {
 	c.ShouldBindJSON(&input)
 
 	res, err := h.service.CreateExcuseService(&input)
-
-	switch err {
-	case "CREATE_EXCUSE_CONFLICT_409":
-		c.JSON(http.StatusConflict, gin.H{
-			"message": "Excuse ID already exist",
-		})
-		return
-	case "CREATE_EXCUSE_INTERNAL_500":
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "There's an error creating a new resource",
-		})
-		return
-	default:
-		c.JSON(http.StatusOK, gin.H{
-			"data": res,
-		})
-		return
+	if err != "" {
+		switch err {
+		case "CREATE_EXCUSE_CONFLICT_409":
+			util.ErrorResponse(c, http.StatusNotFound, "Excuse ID already exist")
+			return
+		case "EXCUSE_NOTFOUND_404":
+			util.ErrorResponse(c, http.StatusNotFound, "Record not found")
+			return
+		default:
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
+			return
+		}
 	}
+
+	util.APIResponse(c, http.StatusOK, res, nil)
 }

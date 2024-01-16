@@ -20,7 +20,12 @@ func NewGetAllExcuseRepository(db *gorm.DB) *repository {
 
 func (r *repository) GetAllExcuseRepository(student model.Student) (*[]model.Excuse, string) {
 	var excuses []model.Excuse
-	db := r.db.Model(excuses)
-	db.Preload("Absent", "id = ?", student.ID).Find(&excuses)
+	if err := r.db.Model(excuses).Preload("Absent", "id = ?", student.ID).Find(&excuses).Error; err != nil {
+		return nil, "EXCUSE_UNEXPECTED_500 : " + err.Error()
+	}
+
+	if len(excuses) <= 0 {
+		return nil, "EXCUSE_NOTFOUND_404"
+	}
 	return &excuses, ""
 }

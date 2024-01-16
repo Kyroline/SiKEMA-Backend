@@ -25,14 +25,13 @@ func (h *handler) UpdateExcuseHandler(c *gin.Context) {
 	if err != "" {
 		switch err {
 		case "EXCUSE_NOTFOUND_404":
-			return
-		case "EXCUSE_INTERNAL_500":
+			util.ErrorResponse(c, http.StatusNotFound, "Record not found")
 			return
 		default:
-			util.ErrorRespose(c, http.StatusInternalServerError, err)
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
 			return
 		}
 	}
-	c.Status(http.StatusAccepted)
+	util.APIResponse(c, http.StatusAccepted, nil, nil)
 
 }
