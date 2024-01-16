@@ -31,9 +31,9 @@ func GlobalErrorHandler() gin.HandlerFunc {
 		if err != nil {
 			switch e := err.Err.(type) {
 			case *CustomError:
-				util.ErrorRespose(c, e.Code, e.Message)
+				util.ErrorResponse(c, e.Code, e.Message)
 			default:
-				util.ErrorRespose(c, 500, err.Error())
+				util.ErrorResponse(c, 500, err.Error())
 			}
 
 			c.Abort()

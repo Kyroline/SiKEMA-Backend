@@ -25,13 +25,13 @@ func (h *handler) ShowAbsentHandler(c *gin.Context) {
 	if err != "" {
 		switch err {
 		case "ABSENT_NOTFOUND_404":
-			util.ErrorRespose(c, http.StatusNotFound, "Absent record not found")
+			util.ErrorResponse(c, http.StatusNotFound, "Absent record not found")
 			return
 		case "Event_NOTFOUND_404":
-			util.ErrorRespose(c, http.StatusNotFound, "Event record not found")
+			util.ErrorResponse(c, http.StatusNotFound, "Event record not found")
 			return
 		default:
-			util.ErrorRespose(c, http.StatusInternalServerError, err)
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
 			return
 		}
 	}

@@ -20,6 +20,6 @@ func APIResponse(c *gin.Context, StatusCode int, Data interface{}, Meta interfac
 	}
 }
 
-func ErrorRespose(c *gin.Context, StatusCode int, Msg string) {
+func ErrorResponse(c *gin.Context, StatusCode int, Msg string) {
 	defer c.AbortWithStatusJSON(StatusCode, gin.H{"message": Msg})
 }

@@ -24,10 +24,10 @@ func (h *handler) GetAbsentHandler(c *gin.Context) {
 	if err != "" {
 		switch err {
 		case "ABSENT_NOTFOUND_404":
-			util.ErrorRespose(c, http.StatusNotFound, "Record not found")
+			util.ErrorResponse(c, http.StatusNotFound, "Record not found")
 			return
 		default:
-			util.ErrorRespose(c, http.StatusInternalServerError, err)
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
 			return
 		}
 	}

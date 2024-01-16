@@ -23,7 +23,7 @@ func (h *handler) CreateExcuseHandler(c *gin.Context) {
 	res, err := h.service.CreateExcuseService(&input)
 	if err != "" {
 		switch err {
-		case "CREATE_EXCUSE_CONFLICT_409":
+		case "EXCUSE_CONFLICT_409":
 			util.ErrorResponse(c, http.StatusNotFound, "Excuse ID already exist")
 			return
 		case "EXCUSE_NOTFOUND_404":

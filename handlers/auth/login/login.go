@@ -30,13 +30,13 @@ func (h *handler) LoginAuthHandler(c *gin.Context) {
 	response := response{Token: token, UserData: *user}
 	switch err {
 	case "LOGIN_UNAUTHENTICATED_401":
-		util.ErrorRespose(c, http.StatusUnauthorized, "Unauthenticated")
+		util.ErrorResponse(c, http.StatusUnauthorized, "Unauthenticated")
 		return
 	case "":
 		util.APIResponse(c, http.StatusOK, response, nil)
 		return
 	default:
-		util.ErrorRespose(c, http.StatusUnauthorized, "Unauthenticated :"+err)
+		util.ErrorResponse(c, http.StatusUnauthorized, "Unauthenticated :"+err)
 		return
 	}
 }

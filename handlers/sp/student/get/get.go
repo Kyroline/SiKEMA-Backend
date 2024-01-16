@@ -29,7 +29,7 @@ func (h *handler) GetSPHandler(c *gin.Context) {
 	res, err := h.service.GetSPService(input)
 	switch err {
 	case "ERR_CONFLICT_409":
-		util.ErrorRespose(c, http.StatusConflict, "SP ID already exist")
+		util.ErrorResponse(c, http.StatusConflict, "SP ID already exist")
 		return
 	default:
 		util.APIResponse(c, http.StatusOK, res, nil)

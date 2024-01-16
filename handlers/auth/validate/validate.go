@@ -19,7 +19,7 @@ func NewValidateAuthHandler(service validateAuth.Service) *handler {
 func (h *handler) ValidateAuthHandler(c *gin.Context) {
 	token := util.ExtractToken(c)
 	if token == "" {
-		util.ErrorRespose(c, http.StatusUnauthorized, "Unauthenticated")
+		util.ErrorResponse(c, http.StatusUnauthorized, "Unauthenticated")
 	}
 
 	res, err := h.service.ValidateAuth(token)
@@ -28,7 +28,7 @@ func (h *handler) ValidateAuthHandler(c *gin.Context) {
 		util.APIResponse(c, http.StatusOK, res, nil)
 		return
 	default:
-		util.ErrorRespose(c, http.StatusInternalServerError, err)
+		util.ErrorResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 }

@@ -24,10 +24,10 @@ func (h *handler) ShowEventHandler(c *gin.Context) {
 	if err != "" {
 		switch err {
 		case "EVENT_NOTFOUND_404":
-			util.ErrorRespose(c, http.StatusNotFound, "Event record not found")
+			util.ErrorResponse(c, http.StatusNotFound, "Event record not found")
 			return
 		default:
-			util.ErrorRespose(c, http.StatusInternalServerError, err)
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
 			return
 		}
 	}

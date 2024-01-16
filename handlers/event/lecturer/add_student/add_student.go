@@ -25,10 +25,10 @@ func (h *handler) AddStudentEventHandler(c *gin.Context) {
 	if err != "" {
 		switch err {
 		case "EVENT_NOTFOUND_404":
-			util.ErrorRespose(c, http.StatusNotFound, "Event ID not found")
+			util.ErrorResponse(c, http.StatusNotFound, "Event ID not found")
 			return
 		default:
-			util.ErrorRespose(c, http.StatusInternalServerError, err)
+			util.ErrorResponse(c, http.StatusInternalServerError, err)
 			return
 		}
 	}

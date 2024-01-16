@@ -28,13 +28,13 @@ func (h *handler) GetSPHandler(c *gin.Context) {
 	if err != "" {
 		switch err {
 		case "ERR_CONFLICT_409":
-			util.ErrorRespose(c, http.StatusConflict, "SP ID already exist")
+			util.ErrorResponse(c, http.StatusConflict, "SP ID already exist")
 			return
 		case "ERR_NOTFOUND_404":
-			util.ErrorRespose(c, http.StatusNotFound, "SP ID not found")
+			util.ErrorResponse(c, http.StatusNotFound, "SP ID not found")
 			return
 		default:
-			util.ErrorRespose(c, http.StatusInternalServerError, "Unexpected Error : "+err)
+			util.ErrorResponse(c, http.StatusInternalServerError, "Unexpected Error : "+err)
 			return
 		}
 	}

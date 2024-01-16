@@ -24,10 +24,10 @@ func (h *handler) CreateSPHandler(c *gin.Context) {
 	if err != "" {
 		switch err {
 		case "ERR_CONFLICT_409":
-			util.ErrorRespose(c, http.StatusConflict, "SP ID already exist")
+			util.ErrorResponse(c, http.StatusConflict, "SP ID already exist")
 			return
 		case "ERR_UNEXPECTED_500":
-			util.ErrorRespose(c, http.StatusInternalServerError, "There's an error creating new resource")
+			util.ErrorResponse(c, http.StatusInternalServerError, "There's an error creating new resource")
 			return
 		}
 	}
