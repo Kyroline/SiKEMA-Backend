@@ -20,7 +20,6 @@ import (
 	route "attendance-is/routes"
 	util "attendance-is/utils"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 
@@ -41,24 +40,24 @@ func main() {
 
 	flag.Parse()
 
-	dbUser := os.Getenv("ATTENDANCE_DB_USER")
+	dbUser := util.GetEnv("ATTENDANCE_DB_USER")
 	if dbUser == "" {
 		dbUser = "root"
 	}
 
-	dbPass := os.Getenv("ATTENDANCE_DB_PASSWORD")
+	dbPass := util.GetEnv("ATTENDANCE_DB_PASSWORD")
 
-	dbHost := os.Getenv("ATTENDANCE_DB_HOST")
+	dbHost := util.GetEnv("ATTENDANCE_DB_HOST")
 	if dbHost == "" {
 		dbHost = "127.0.0.1"
 	}
 
-	dbPort := os.Getenv("ATTENDANCE_DB_PORT")
+	dbPort := util.GetEnv("ATTENDANCE_DB_PORT")
 	if dbPort == "" {
 		dbPort = "3306"
 	}
 
-	dbName := os.Getenv("ATTENDANCE_DB_NAME")
+	dbName := util.GetEnv("ATTENDANCE_DB_NAME")
 	if dbName == "" {
 		dbName = "attendance-is"
 	}
